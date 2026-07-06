@@ -1,17 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
-  <title id="title">BLK.8 CAFÉ official logo</title>
-  <desc id="desc">Official BLK.8 CAFÉ logo with house mark, wordmark, and specialty coffee text.</desc>
-  <rect width="960" height="360" fill="#ffffff"/>
-
-  <g fill="#000000" transform="translate(105 58)">
-    <path d="M120 104 236 0l116 104v62h-54v-38l-62-55-62 55v38h-54z"/>
-    <path d="M42 184h78v77H42z"/>
-    <path d="M42 261h78v52c0 22 18 40 40 40h181c42 0 76-34 76-76v-93h-77v93H174v-93h-77v93H42z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" role="img" aria-labelledby="title desc">
+  <title id="title">BLK.8 CAFÉ Logo</title>
+  <desc id="desc">Logo featuring a house-shaped coffee cup and the text BLK.8 CAFÉ SPECIALTY COFFEE</desc>
+  
+  <!-- House/Cup Icon -->
+  <g fill="#000000">
+    <!-- Main Body -->
+    <path d="M40 100 L40 140 Q40 150 50 150 L100 150 Q110 150 110 140 L110 100 Z" />
+    <!-- Roof -->
+    <path d="M25 100 L75 60 L125 100 Z" />
+    <!-- Chimney -->
+    <rect x="105" y="75" width="10" height="20" />
+    <!-- Handle -->
+    <path d="M110 105 Q135 105 135 125 Q135 145 110 145" fill="none" stroke="#000000" stroke-width="12" />
+    <!-- Window -->
+    <rect x="65" y="110" width="8" height="8" fill="#ffffff" />
+    <rect x="77" y="110" width="8" height="8" fill="#ffffff" />
+    <rect x="65" y="122" width="8" height="8" fill="#ffffff" />
+    <rect x="77" y="122" width="8" height="8" fill="#ffffff" />
   </g>
 
-  <g fill="#000000" font-family="Arial Black, Arial, Helvetica, sans-serif" font-weight="900">
-    <text x="455" y="154" font-size="80" letter-spacing="2">BLK.8</text>
-    <text x="522" y="238" font-size="62" letter-spacing="1">CAFÉ</text>
-    <text x="490" y="284" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="900" letter-spacing="3">SPECIALTY COFFEE</text>
+  <!-- Text -->
+  <g fill="#000000" font-family="Arial, sans-serif" font-weight="bold">
+    <text x="150" y="115" font-size="52" letter-spacing="-1">BLK.8</text>
+    <text x="150" y="155" font-size="42" letter-spacing="2">CAFÉ</text>
+    <text x="150" y="180" font-size="12" letter-spacing="4" font-weight="normal">SPECIALTY COFFEE</text>
   </g>
 </svg>
