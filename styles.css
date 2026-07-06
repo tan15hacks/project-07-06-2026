@@ -101,9 +101,24 @@ select {
   width: 42px;
   height: 42px;
   border-radius: 14px;
+  transition: filter 0.25s ease;
 }
 
-.hero .brand__text,
+/* Initially white logo when at the top (hero) */
+.site-header:not(.is-scrolled) .brand__mark {
+  color: var(--white);
+  filter: drop-shadow(0 2px 10px rgba(0,0,0,0.3));
+}
+
+/* Black logo when scrolled */
+.site-header.is-scrolled .brand__mark {
+  color: var(--ink);
+}
+
+.brand__text {
+  transition: color 0.25s ease;
+}
+
 .site-header:not(.is-scrolled) .brand__text {
   color: var(--white);
   text-shadow: 0 2px 20px rgba(0,0,0,0.4);
