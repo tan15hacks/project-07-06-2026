@@ -1,25 +1,36 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="BLK.8 CAFÃ‰ in Guinobatan, Albay â€” cozy coffee, matcha, comfort food, board games, dine-in, takeout, and Messenger orders." />
+  <meta name="description" content="BLK.8 CAFÉ in Guinobatan, Albay — cozy coffee, matcha, comfort food, board games, dine-in, takeout, and Messenger orders." />
   <meta name="theme-color" content="#111111" />
-  <title>BLK.8 CAFÃ‰ | Coffee, Matcha & Cozy Eats in Guinobatan</title>
+  <title>BLK.8 CAFÉ | Coffee, Matcha & Cozy Eats in Guinobatan</title>
   <link rel="icon" href="assets/logo.svg" />
   <link rel="preload" href="styles.css" as="style" />
-  <link rel="preload" href="assets/photo-cafe-hero.webp" as="image" type="image/webp" />
+  <link rel="preload" href="assets/photo-cafe-interior.webp" as="image" type="image/webp" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="polish.css" />
+  <style>
+    .hero__media {
+      background:
+        linear-gradient(90deg, rgba(15, 12, 9, 0.72), rgba(15, 12, 9, 0.24) 52%, rgba(15, 12, 9, 0.58)),
+        url("assets/photo-cafe-interior.webp") center/cover no-repeat !important;
+    }
+
+    .btn::after {
+      content: "→" !important;
+    }
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header" data-header>
     <nav class="nav container" aria-label="Main navigation">
-      <a class="brand" href="#home" aria-label="BLK.8 CAFÃ‰ home">
+      <a class="brand" href="#home" aria-label="BLK.8 CAFÉ home">
         <img src="assets/logo.svg" alt="" class="brand__mark" />
-        <span class="brand__text">BLK.8 CAFÃ‰</span>
+        <span class="brand__text">BLK.8 CAFÉ</span>
       </a>
 
       <button class="nav-toggle" data-nav-toggle aria-label="Open menu" aria-expanded="false">
@@ -38,15 +49,15 @@
 
   <main id="main">
     <section class="hero" id="home">
-      <div class="hero__media" role="img" aria-label="Warm generated cafÃ© exterior photo for BLK.8 CAFÃ‰"></div>
+      <div class="hero__media" role="img" aria-label="Warm BLK.8 CAFÉ interior photo"></div>
       <div class="hero__overlay"></div>
 
       <div class="container hero__content">
-        <div class="hero__badge">Neighborhood cafÃ© â€¢ Guinobatan, Albay</div>
-        <p class="eyebrow">Coffee â€¢ Matcha â€¢ Comfort Food â€¢ Board Games</p>
-        <h1>Make today a little better at <span>BLK.8 CAFÃ‰</span>.</h1>
+        <div class="hero__badge">Neighborhood café • Guinobatan, Albay</div>
+        <p class="eyebrow">Coffee • Matcha • Comfort Food • Board Games</p>
+        <h1>Make today a little better at <span>BLK.8 CAFÉ</span>.</h1>
         <p class="hero__lead">
-          A cozy cafÃ© spot for good drinks, warm food, takeout runs, study dates,
+          A cozy café spot for good drinks, warm food, takeout runs, study dates,
           barkada catch-ups, and slow evenings that deserve one more cup.
         </p>
 
@@ -57,8 +68,8 @@
         </div>
 
         <div class="hero__stats" aria-label="Cafe highlights">
-          <div><strong>4.4â˜…</strong><span>Google rating</span></div>
-          <div><strong>â‚±1â€“200</strong><span>Budget-friendly</span></div>
+          <div><strong>4.4★</strong><span>Google rating</span></div>
+          <div><strong>₱1–200</strong><span>Budget-friendly</span></div>
           <div><strong>Dine-in</strong><span>plus takeout</span></div>
           <div><strong>11 PM</strong><span>late closing</span></div>
         </div>
@@ -81,9 +92,9 @@
         <div class="section-heading section-heading--split">
           <div>
             <p class="eyebrow">Menu highlights</p>
-            <h2>For coffee people, matcha people, and â€œtara kainâ€ people.</h2>
+            <h2>For coffee people, matcha people, and “tara kain” people.</h2>
           </div>
-          <p>Clean cards, crisp generated visuals, and quick filters make it easier for visitors to decide what they want before messaging.</p>
+          <p>Clean cards, crisp photos, and quick filters make it easier for visitors to decide what they want before messaging.</p>
         </div>
 
         <div class="menu-filters" role="tablist" aria-label="Menu categories">
@@ -99,7 +110,7 @@
             <div class="menu-card__body">
               <span class="pill">Drink</span>
               <h3>Matcha Latte</h3>
-              <p>Smooth, green, creamy, and cafÃ©-photo ready.</p>
+              <p>Smooth, green, creamy, and café-photo ready.</p>
               <strong>Ask current price</strong>
             </div>
           </article>
@@ -129,7 +140,7 @@
             <div class="menu-card__body">
               <span class="pill">Food</span>
               <h3>Burger & Fries</h3>
-              <p>A filling cafÃ© meal for barkada visits.</p>
+              <p>A filling café meal for barkada visits.</p>
               <strong>Ask current price</strong>
             </div>
           </article>
@@ -163,9 +174,9 @@
           <p class="eyebrow">Dine-in experience</p>
           <h2>Come for the drinks. Stay for the mood.</h2>
           <p>
-            BLK.8 CAFÃ‰ feels like the kind of neighborhood spot people save on Maps:
+            BLK.8 CAFÉ feels like the kind of neighborhood spot people save on Maps:
             warm lighting, cozy tables, board games, and comfort food that turns
-            â€œquick coffeeâ€ into a longer hangout.
+            “quick coffee” into a longer hangout.
           </p>
           <div class="feature-list">
             <div><span>01</span><p>Board games for friends, families, and casual dates.</p></div>
@@ -175,9 +186,9 @@
           <a class="btn btn--dark" href="#location">Plan Your Visit</a>
         </div>
         <div class="photo-stack" aria-label="Generated cafe food and drinks photo gallery">
-          <img src="assets/photo-cafe-interior.webp" alt="Generated cozy BLK.8 CAFÃ‰ interior photo" loading="lazy" />
-          <img src="assets/photo-desserts.webp" alt="Generated cafÃ© desserts and takeout cups photo" loading="lazy" />
-          <img src="assets/photo-matcha-latte.webp" alt="Generated matcha latte at BLK.8 CAFÃ‰" loading="lazy" />
+          <img src="assets/photo-cafe-interior.webp" alt="Generated cozy BLK.8 CAFÉ interior photo" loading="lazy" />
+          <img src="assets/photo-desserts.webp" alt="Generated café desserts and takeout cups photo" loading="lazy" />
+          <img src="assets/photo-matcha-latte.webp" alt="Generated matcha latte at BLK.8 CAFÉ" loading="lazy" />
         </div>
       </div>
     </section>
@@ -194,19 +205,19 @@
 
         <div class="review-grid">
           <article class="review-card">
-            <div class="stars" aria-label="5 stars">â˜…â˜…â˜…â˜…â˜…</div>
-            <p>â€œGood atmosphere, good coffee, and customer service. A chill place to hang out with friends and family.â€</p>
+            <div class="stars" aria-label="5 stars">★★★★★</div>
+            <p>“Good atmosphere, good coffee, and customer service. A chill place to hang out with friends and family.”</p>
             <span>Local Guide review theme</span>
           </article>
           <article class="review-card">
-            <div class="stars" aria-label="5 stars">â˜…â˜…â˜…â˜…â˜…</div>
-            <p>â€œCozy ambiance, food and drinks, plus friendly crew â€” a good stop for coffee and snacks.â€</p>
+            <div class="stars" aria-label="5 stars">★★★★★</div>
+            <p>“Cozy ambiance, food and drinks, plus friendly crew — a good stop for coffee and snacks.”</p>
             <span>Customer review theme</span>
           </article>
           <article class="review-card review-card--score">
             <strong>4.4</strong>
             <p>Google rating from 12 reviews</p>
-            <a href="#order">Turn reviews into orders â†’</a>
+            <a href="#order">Turn reviews into orders →</a>
           </article>
         </div>
       </div>
@@ -239,7 +250,7 @@
           <h2>Ready when you are.</h2>
           <p>
             This lightweight order form creates a clean Messenger-ready message.
-            Replace the placeholder Messenger link in <code>script.js</code> with the official BLK.8 CAFÃ‰ page link before publishing.
+            Replace the placeholder Messenger link in <code>script.js</code> with the official BLK.8 CAFÉ page link before publishing.
           </p>
 
           <div class="notice">
@@ -294,30 +305,18 @@
       <div class="container location__grid">
         <div>
           <p class="eyebrow">Visit us</p>
-          <h2>Find BLK.8 CAFÃ‰ in Guinobatan, Albay.</h2>
+          <h2>Find BLK.8 CAFÉ in Guinobatan, Albay.</h2>
           <div class="location-cards">
-            <div>
-              <span>Address</span>
-              <p>5HVW+CW4, Rizal St, Ilaod, Guinobatan, Albay</p>
-            </div>
-            <div>
-              <span>Landmark</span>
-              <p>Located in MEDICUS CLINIC</p>
-            </div>
-            <div>
-              <span>Service options</span>
-              <p>Dine-in â€¢ Takeout</p>
-            </div>
-            <div>
-              <span>Hours</span>
-              <p>Open â€¢ Closes 11 PM</p>
-            </div>
+            <div><span>Address</span><p>5HVW+CW4, Rizal St, Ilaod, Guinobatan, Albay</p></div>
+            <div><span>Landmark</span><p>Located in MEDICUS CLINIC</p></div>
+            <div><span>Service options</span><p>Dine-in • Takeout</p></div>
+            <div><span>Hours</span><p>Open • Closes 11 PM</p></div>
           </div>
         </div>
 
         <div class="map-card">
           <div class="map-card__mock">
-            <span>BLK.8 CAFÃ‰</span>
+            <span>BLK.8 CAFÉ</span>
             <p>Rizal St, Ilaod, Guinobatan, Albay</p>
             <a class="btn btn--small" href="https://www.google.com/maps/search/?api=1&query=BLK.8%20CAF%C3%89%20Guinobatan%20Albay" target="_blank" rel="noopener">Open in Google Maps</a>
           </div>
@@ -344,13 +343,12 @@
     <div class="container footer__inner">
       <a class="brand" href="#home">
         <img src="assets/logo.svg" alt="" class="brand__mark" />
-        <span class="brand__text">BLK.8 CAFÃ‰</span>
+        <span class="brand__text">BLK.8 CAFÉ</span>
       </a>
-      <p>Â© <span data-year></span> BLK.8 CAFÃ‰. Coffee, matcha, comfort food, and cozy tables in Guinobatan.</p>
+      <p>© <span data-year></span> BLK.8 CAFÉ. Coffee, matcha, comfort food, and cozy tables in Guinobatan.</p>
     </div>
   </footer>
 
   <script src="script.js" defer></script>
 </body>
 </html>
-
