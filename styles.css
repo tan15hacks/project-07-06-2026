@@ -95,37 +95,45 @@ select {
   gap: 10px;
   font-weight: 900;
   letter-spacing: 0.02em;
+  color: var(--white); /* Default to white for hero section */
 }
 
 .brand__mark {
   width: 42px;
   height: 42px;
   border-radius: 14px;
-  transition: filter 0.25s ease;
+  color: inherit;
+  transition: color 0.25s ease, filter 0.25s ease;
 }
 
 /* Initially white logo when at the top (hero) */
-.site-header:not(.is-scrolled) .brand__mark {
+.site-header:not(.is-scrolled) .brand {
   color: var(--white);
+}
+
+.site-header:not(.is-scrolled) .brand__mark {
   filter: drop-shadow(0 2px 10px rgba(0,0,0,0.3));
 }
 
 /* Black logo when scrolled */
-.site-header.is-scrolled .brand__mark {
+.site-header.is-scrolled .brand {
   color: var(--ink);
 }
 
+.site-header.is-scrolled .brand__mark {
+  filter: none;
+}
+
 .brand__text {
+  color: inherit;
   transition: color 0.25s ease;
 }
 
 .site-header:not(.is-scrolled) .brand__text {
-  color: var(--white);
   text-shadow: 0 2px 20px rgba(0,0,0,0.4);
 }
 
 .site-header.is-scrolled .brand__text {
-  color: var(--ink);
   text-shadow: none;
 }
 
