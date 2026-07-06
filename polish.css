@@ -36,7 +36,6 @@ select:focus-visible {
 .brand__mark {
   width: clamp(154px, 18vw, 230px);
   height: auto;
-  object-fit: contain;
   display: block;
   border-radius: 0;
   background: transparent;
