@@ -12,11 +12,19 @@ const menuCards = document.querySelectorAll(".menu-card");
 const orderForm = document.querySelector("[data-order-form]");
 const formStatus = document.querySelector("[data-form-status]");
 
-year.textContent = new Date().getFullYear();
+year && (year.textContent = new Date().getFullYear());
 
-window.addEventListener("scroll", () => {
-  header.classList.toggle("is-scrolled", window.scrollY > 12);
-});
+const syncHeader = () => {
+  header?.classList.toggle("is-scrolled", window.scrollY > 12);
+};
+
+syncHeader();
+window.addEventListener("scroll", syncHeader, { passive: true });
+
+const closeMenu = () => {
+  navLinks?.classList.remove("is-open");
+  toggle?.setAttribute("aria-expanded", "false");
+};
 
 toggle?.addEventListener("click", () => {
   const isOpen = navLinks.classList.toggle("is-open");
@@ -24,10 +32,11 @@ toggle?.addEventListener("click", () => {
 });
 
 navLinks?.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => {
-    navLinks.classList.remove("is-open");
-    toggle?.setAttribute("aria-expanded", "false");
-  });
+  link.addEventListener("click", closeMenu);
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeMenu();
 });
 
 filterButtons.forEach((button) => {
@@ -35,8 +44,9 @@ filterButtons.forEach((button) => {
     const filter = button.dataset.filter;
 
     filterButtons.forEach((btn) => {
-      btn.classList.toggle("is-active", btn === button);
-      btn.setAttribute("aria-selected", String(btn === button));
+      const active = btn === button;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-selected", String(active));
     });
 
     menuCards.forEach((card) => {
@@ -61,9 +71,13 @@ orderForm?.addEventListener("submit", async (event) => {
     `Notes: ${data.get("notes") || "None"}`,
   ].join("\n");
 
+  const successMessage = MESSENGER_LINK
+    ? "Order message copied. Messenger is opening now."
+    : "Order message copied. Paste it into Messenger to send your order.";
+
   try {
     await navigator.clipboard.writeText(message);
-    formStatus.textContent = "Order message copied. Paste it into Messenger to send your order.";
+    formStatus.textContent = successMessage;
 
     if (MESSENGER_LINK) {
       const url = new URL(MESSENGER_LINK);
