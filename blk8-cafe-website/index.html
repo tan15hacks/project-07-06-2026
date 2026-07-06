@@ -8,7 +8,9 @@
   <title>BLK.8 CAFÉ | Coffee, Matcha & Cozy Eats in Guinobatan</title>
   <link rel="icon" href="assets/logo.svg" />
   <link rel="preload" href="styles.css" as="style" />
+  <link rel="preload" href="assets/generated-cafe-hero.svg" as="image" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="polish.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -36,28 +38,29 @@
 
   <main id="main">
     <section class="hero" id="home">
-      <div class="hero__media" role="img" aria-label="Exterior of BLK.8 CAFÉ"></div>
+      <div class="hero__media" role="img" aria-label="Generated warm café exterior illustration for BLK.8 CAFÉ"></div>
       <div class="hero__overlay"></div>
 
       <div class="container hero__content">
+        <div class="hero__badge">Neighborhood café • Guinobatan, Albay</div>
         <p class="eyebrow">Coffee • Matcha • Comfort Food • Board Games</p>
         <h1>Make today a little better at <span>BLK.8 CAFÉ</span>.</h1>
         <p class="hero__lead">
-          A cozy café spot in Guinobatan, Albay for good drinks, warm food, takeout runs,
-          study dates, barkada catch-ups, and slow evenings that deserve one more cup.
+          A cozy café spot for good drinks, warm food, takeout runs, study dates,
+          barkada catch-ups, and slow evenings that deserve one more cup.
         </p>
 
         <div class="hero__actions">
           <a class="btn" href="#order">Order Now</a>
-          <a class="btn btn--ghost" href="#menu">View Menu</a>
+          <a class="btn btn--ghost" href="#menu">Explore Menu</a>
           <a class="btn btn--ghost" href="https://www.google.com/maps/search/?api=1&query=BLK.8%20CAF%C3%89%20Guinobatan%20Albay" target="_blank" rel="noopener">Get Directions</a>
         </div>
 
         <div class="hero__stats" aria-label="Cafe highlights">
           <div><strong>4.4★</strong><span>Google rating</span></div>
-          <div><strong>₱1–200</strong><span>per person</span></div>
-          <div><strong>Dine-in</strong><span>& takeout</span></div>
-          <div><strong>Open late</strong><span>until 11 PM</span></div>
+          <div><strong>₱1–200</strong><span>Budget-friendly</span></div>
+          <div><strong>Dine-in</strong><span>plus takeout</span></div>
+          <div><strong>11 PM</strong><span>late closing</span></div>
         </div>
       </div>
     </section>
@@ -67,7 +70,7 @@
         <div>
           <p class="eyebrow">Fastest way to order</p>
           <h2>Craving coffee, matcha, or snacks?</h2>
-          <p>Send your order details and we’ll prepare it for pickup or takeout. Add your preferred time, sweetness notes, and payment reference if needed.</p>
+          <p>Build a clear Messenger order with your name, pickup time, sweetness notes, and food requests in less than a minute.</p>
         </div>
         <a class="btn" href="#order">Start Order</a>
       </div>
@@ -75,10 +78,12 @@
 
     <section class="section section--cream" id="menu">
       <div class="container">
-        <div class="section-heading">
-          <p class="eyebrow">Menu highlights</p>
-          <h2>For coffee people, matcha people, and “tara kain” people.</h2>
-          <p>Use this section for the official menu. Current cards are editable placeholders based on visible café highlights and should be updated with exact item names and prices.</p>
+        <div class="section-heading section-heading--split">
+          <div>
+            <p class="eyebrow">Menu highlights</p>
+            <h2>For coffee people, matcha people, and “tara kain” people.</h2>
+          </div>
+          <p>Clean cards, crisp generated visuals, and quick filters make it easier for visitors to decide what they want before messaging.</p>
         </div>
 
         <div class="menu-filters" role="tablist" aria-label="Menu categories">
@@ -90,18 +95,18 @@
 
         <div class="menu-grid">
           <article class="menu-card" data-category="drinks">
-            <img src="assets/matcha-latte.jpg" alt="Matcha latte drink" />
-            <div>
+            <img src="assets/generated-matcha.svg" alt="Generated matcha latte illustration" loading="lazy" />
+            <div class="menu-card__body">
               <span class="pill">Drink</span>
               <h3>Matcha Latte</h3>
-              <p>Smooth, green, and café-photo ready.</p>
+              <p>Smooth, green, creamy, and café-photo ready.</p>
               <strong>Ask current price</strong>
             </div>
           </article>
 
           <article class="menu-card" data-category="drinks">
-            <img src="assets/hot-latte.jpg" alt="Hot latte with latte art" />
-            <div>
+            <img src="assets/generated-hot-latte.svg" alt="Generated hot latte with latte art illustration" loading="lazy" />
+            <div class="menu-card__body">
               <span class="pill">Coffee</span>
               <h3>Hot Coffee Latte</h3>
               <p>Warm cup, soft foam, cozy table energy.</p>
@@ -110,8 +115,8 @@
           </article>
 
           <article class="menu-card" data-category="drinks">
-            <img src="assets/iced-coffee.jpg" alt="Iced coffee drink" />
-            <div>
+            <img src="assets/generated-iced-coffee.svg" alt="Generated iced coffee illustration" loading="lazy" />
+            <div class="menu-card__body">
               <span class="pill">Iced</span>
               <h3>Iced Coffee</h3>
               <p>Cool, creamy, and made for Albay afternoons.</p>
@@ -120,8 +125,8 @@
           </article>
 
           <article class="menu-card" data-category="food">
-            <img src="assets/burger-fries.jpg" alt="Burger and fries meal" />
-            <div>
+            <img src="assets/generated-burger-fries.svg" alt="Generated burger and fries meal illustration" loading="lazy" />
+            <div class="menu-card__body">
               <span class="pill">Food</span>
               <h3>Burger & Fries</h3>
               <p>A filling café meal for barkada visits.</p>
@@ -130,8 +135,8 @@
           </article>
 
           <article class="menu-card" data-category="food">
-            <img src="assets/rice-meal.jpg" alt="Rice meal with meat and egg" />
-            <div>
+            <img src="assets/generated-rice-meal.svg" alt="Generated rice meal with egg illustration" loading="lazy" />
+            <div class="menu-card__body">
               <span class="pill">Meal</span>
               <h3>Rice Meals</h3>
               <p>Comfort food for lunch, dinner, and cravings.</p>
@@ -140,8 +145,8 @@
           </article>
 
           <article class="menu-card" data-category="snacks">
-            <img src="assets/pasta.jpg" alt="Pasta dish" />
-            <div>
+            <img src="assets/generated-pasta.svg" alt="Generated pasta dish illustration" loading="lazy" />
+            <div class="menu-card__body">
               <span class="pill">Snack</span>
               <h3>Pasta & Snacks</h3>
               <p>Pair with coffee when one drink is not enough.</p>
@@ -159,30 +164,32 @@
           <h2>Come for the drinks. Stay for the mood.</h2>
           <p>
             BLK.8 CAFÉ feels like the kind of neighborhood spot people save on Maps:
-            clean interiors, warm lighting, cozy tables, board games, and food that makes
-            “quick coffee” turn into a longer hangout.
+            warm lighting, cozy tables, board games, and comfort food that turns
+            “quick coffee” into a longer hangout.
           </p>
           <div class="feature-list">
             <div><span>01</span><p>Board games for friends, families, and casual dates.</p></div>
             <div><span>02</span><p>Dine-in and takeout options for flexible cravings.</p></div>
-            <div><span>03</span><p>Photos, promos, and menu highlights built to convert visitors into orders.</p></div>
+            <div><span>03</span><p>Clear CTAs and polished visuals built to convert visitors into orders.</p></div>
           </div>
           <a class="btn btn--dark" href="#location">Plan Your Visit</a>
         </div>
-        <div class="photo-stack" aria-label="Cafe food and drinks gallery">
-          <img src="assets/cafe-interior.jpg" alt="BLK.8 CAFÉ interior" />
-          <img src="assets/sweets.jpg" alt="Cafe desserts or takeout cups" />
-          <img src="assets/matcha-latte.jpg" alt="Matcha latte at BLK.8 CAFÉ" />
+        <div class="photo-stack" aria-label="Generated cafe food and drinks gallery">
+          <img src="assets/generated-cafe-interior.svg" alt="Generated cozy BLK.8 CAFÉ interior illustration" loading="lazy" />
+          <img src="assets/generated-desserts.svg" alt="Generated café desserts and takeout cups illustration" loading="lazy" />
+          <img src="assets/generated-matcha.svg" alt="Generated matcha latte at BLK.8 CAFÉ" loading="lazy" />
         </div>
       </div>
     </section>
 
     <section class="section section--dark" id="reviews">
       <div class="container">
-        <div class="section-heading section-heading--light">
-          <p class="eyebrow">Loved by locals</p>
-          <h2>Social proof that makes people confident to visit.</h2>
-          <p>Review snippets are based on visible public review themes from the screenshots and can be replaced with approved testimonials.</p>
+        <div class="section-heading section-heading--split section-heading--light">
+          <div>
+            <p class="eyebrow">Loved by locals</p>
+            <h2>Social proof that makes people confident to visit.</h2>
+          </div>
+          <p>Short, scannable review cards keep trust visible without making the page feel crowded.</p>
         </div>
 
         <div class="review-grid">
@@ -207,17 +214,20 @@
 
     <section class="section gallery-section">
       <div class="container">
-        <div class="section-heading">
-          <p class="eyebrow">Gallery</p>
-          <h2>Make the menu look as craveable as it tastes.</h2>
+        <div class="section-heading section-heading--split">
+          <div>
+            <p class="eyebrow">Gallery</p>
+            <h2>Make the menu look as craveable as it tastes.</h2>
+          </div>
+          <p>All visuals below are local generated SVGs, so they stay sharp on mobile, desktop, and high-resolution displays.</p>
         </div>
         <div class="gallery">
-          <img src="assets/matcha-latte.jpg" alt="Matcha latte" />
-          <img src="assets/hot-latte.jpg" alt="Hot latte" />
-          <img src="assets/burger-fries.jpg" alt="Burger and fries" />
-          <img src="assets/rice-meal.jpg" alt="Rice meal" />
-          <img src="assets/pasta.jpg" alt="Pasta" />
-          <img src="assets/iced-coffee.jpg" alt="Iced coffee" />
+          <img src="assets/generated-matcha.svg" alt="Generated matcha latte" loading="lazy" />
+          <img src="assets/generated-hot-latte.svg" alt="Generated hot latte" loading="lazy" />
+          <img src="assets/generated-burger-fries.svg" alt="Generated burger and fries" loading="lazy" />
+          <img src="assets/generated-rice-meal.svg" alt="Generated rice meal" loading="lazy" />
+          <img src="assets/generated-pasta.svg" alt="Generated pasta" loading="lazy" />
+          <img src="assets/generated-iced-coffee.svg" alt="Generated iced coffee" loading="lazy" />
         </div>
       </div>
     </section>
@@ -228,13 +238,13 @@
           <p class="eyebrow">Order online</p>
           <h2>Ready when you are.</h2>
           <p>
-            This lightweight order form creates a message customers can send through Messenger.
-            Replace the placeholder Messenger link in <code>script.js</code> with the official BLK.8 CAFÉ page link.
+            This lightweight order form creates a clean Messenger-ready message.
+            Replace the placeholder Messenger link in <code>script.js</code> with the official BLK.8 CAFÉ page link before publishing.
           </p>
 
           <div class="notice">
-            <strong>Template note:</strong>
-            <p>Exact menu prices, payment details, contact number, and official Messenger link should be added by the café owner before publishing.</p>
+            <strong>Launch checklist</strong>
+            <p>Add exact menu prices, payment details, contact number, and the official Messenger link before going live.</p>
           </div>
         </div>
 
@@ -317,9 +327,12 @@
 
     <section class="final-cta">
       <div class="container final-cta__inner">
-        <h2>Make your next coffee run a BLK.8 run.</h2>
-        <p>Order ahead, bring your friends, or visit for a cozy dine-in break.</p>
         <div>
+          <p class="eyebrow">See you soon</p>
+          <h2>Make your next coffee run a BLK.8 run.</h2>
+          <p>Order ahead, bring your friends, or visit for a cozy dine-in break.</p>
+        </div>
+        <div class="final-cta__actions">
           <a class="btn" href="#order">Order Now</a>
           <a class="btn btn--ghost" href="#location">Get Directions</a>
         </div>
