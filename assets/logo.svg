@@ -1,10 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
-  <title id="title">BLK.8 CAFÉ logo mark</title>
-  <desc id="desc">Official-style black BLK.8 CAFÉ house and block logo mark.</desc>
-  <rect width="512" height="512" rx="96" fill="#ffffff"/>
-  <g fill="#000000">
-    <path d="M151 207 256 113l105 94v53h-49v-31l-56-50-56 50v31h-49z"/>
-    <path d="M90 275h67v67H90z"/>
-    <path d="M90 342h67v50c0 19 15 34 34 34h163c38 0 68-30 68-68v-83h-67v83H202v-83h-67v84H90z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">BLK.8 CAFÉ official logo</title>
+  <desc id="desc">Official BLK.8 CAFÉ logo with house mark, wordmark, and specialty coffee text.</desc>
+  <rect width="960" height="360" fill="#ffffff"/>
+
+  <g fill="#000000" transform="translate(105 58)">
+    <path d="M120 104 236 0l116 104v62h-54v-38l-62-55-62 55v38h-54z"/>
+    <path d="M42 184h78v77H42z"/>
+    <path d="M42 261h78v52c0 22 18 40 40 40h181c42 0 76-34 76-76v-93h-77v93H174v-93h-77v93H42z"/>
+  </g>
+
+  <g fill="#000000" font-family="Arial Black, Arial, Helvetica, sans-serif" font-weight="900">
+    <text x="455" y="154" font-size="80" letter-spacing="2">BLK.8</text>
+    <text x="522" y="238" font-size="62" letter-spacing="1">CAFÉ</text>
+    <text x="490" y="284" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="900" letter-spacing="3">SPECIALTY COFFEE</text>
   </g>
 </svg>
