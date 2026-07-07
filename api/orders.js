@@ -89,8 +89,10 @@ module.exports = async function handler(req, res) {
     }
 
     const orders = Array.isArray(body.orders) ? body.orders : [];
-    await sql`DELETE FROM order_items`;
-    await sql`DELETE FROM orders`;
+
+    // Safety rule: never wipe the whole database from browser sync.
+    // Local tabs can temporarily have an empty localStorage copy, so PUT only upserts
+    // the orders it receives. Admin delete/clear should use a separate protected action later.
     for (const order of orders) {
       await upsertOrder(sql, order);
     }
