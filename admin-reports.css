@@ -1,0 +1,234 @@
+.report-workspace {
+  display: grid;
+  gap: 24px;
+}
+
+.report-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.report-hero h2,
+.report-section-heading h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  letter-spacing: -0.055em;
+  line-height: 0.95;
+}
+
+.report-hero p:not(.eyebrow),
+.report-section-heading p,
+.report-updated {
+  max-width: 720px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.report-actions button[data-export-pdf] {
+  background: #15120f;
+}
+
+.report-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.report-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.report-kpi {
+  border: 1px solid rgba(21, 18, 15, 0.08);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 16px 44px rgba(21, 18, 15, 0.08);
+  padding: 18px;
+}
+
+.report-kpi span {
+  display: block;
+  color: var(--matcha);
+  font-size: 0.76rem;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.report-kpi strong {
+  display: block;
+  margin-top: 8px;
+  font-size: clamp(1.7rem, 3vw, 2.7rem);
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.report-kpi p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.report-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.report-chart-card {
+  border: 1px solid rgba(21, 18, 15, 0.08);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 52px rgba(21, 18, 15, 0.09);
+  padding: 20px;
+  overflow: hidden;
+}
+
+.report-chart-card h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.04em;
+}
+
+.report-chart-card p {
+  margin: 6px 0 16px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.report-chart-card svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.report-table-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.report-table-grid > article:last-child {
+  grid-column: 1 / -1;
+}
+
+.report-table-wrap {
+  overflow: auto;
+}
+
+.report-table-wrap + .report-table-wrap {
+  margin-top: 18px;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+  color: var(--dark);
+  font-size: 0.92rem;
+}
+
+.report-table caption {
+  margin-bottom: 10px;
+  text-align: left;
+  color: var(--muted);
+  font-weight: 950;
+}
+
+.report-table th,
+.report-table td {
+  border-bottom: 1px solid rgba(21, 18, 15, 0.08);
+  padding: 11px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.report-table th {
+  background: #f3e7d6;
+  color: var(--dark);
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.report-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.report-table td strong {
+  font-weight: 950;
+}
+
+.report-empty {
+  border: 1px dashed rgba(21, 18, 15, 0.22);
+  border-radius: 22px;
+  padding: 26px;
+  color: var(--muted);
+  text-align: center;
+}
+
+@media (max-width: 1180px) {
+  .report-kpi-grid,
+  .report-chart-grid,
+  .report-table-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .report-table-grid > article:last-child {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .report-hero,
+  .report-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .report-actions,
+  .report-actions button {
+    width: 100%;
+  }
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+
+  .admin-sidebar,
+  .admin-topbar,
+  .report-actions,
+  .logout {
+    display: none !important;
+  }
+
+  .admin-dashboard,
+  .admin-content,
+  .admin-panel.is-active {
+    display: block !important;
+  }
+
+  .panel-card,
+  .report-chart-card,
+  .report-kpi {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+}
