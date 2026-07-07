@@ -49,7 +49,7 @@
         <a href="index.html#experience">Dine In</a>
         <a href="index.html#reviews">Reviews</a>
         <a href="index.html#location">Location</a>
-        <a href="#order-panel" class="btn btn--small">View Order</a>
+        <a href="#order-panel" class="btn btn--small">View Order <span class="cart-pill" data-nav-cart-count>0</span></a>
       </div>
     </nav>
   </header>
@@ -59,10 +59,10 @@
       <div class="container menu-page-hero__grid">
         <div>
           <p class="eyebrow">BLK.8 CAFÉ menu</p>
-          <h1>Build your order before messaging the café.</h1>
+          <h1>Choose your food, review your cart, then place your order.</h1>
           <p>
             Add drinks, snacks, and meals to your order list. Adjust quantities, add pickup notes,
-            then copy a clean Messenger-ready order message.
+            choose your order type, then submit your order request.
           </p>
           <div class="hero__actions">
             <a class="btn" href="#menu-list">Start Ordering</a>
@@ -85,7 +85,7 @@
               <p class="eyebrow">Choose items</p>
               <h2>Menu items</h2>
             </div>
-            <p>Sample prices are editable. Replace these with official BLK.8 CAFÉ prices before final launch.</p>
+            <p>Add items to your cart. The order panel updates automatically with quantities, subtotal, and estimated total.</p>
           </div>
 
           <div class="menu-filters" role="tablist" aria-label="Menu categories">
@@ -185,6 +185,11 @@
             <button type="button" data-clear-cart>Clear</button>
           </div>
 
+          <div class="cart-summary-strip">
+            <span data-cart-count>0 items</span>
+            <strong data-cart-mini-total>₱0</strong>
+          </div>
+
           <ul class="cart-list" data-cart-list>
             <li class="cart-empty">No items yet.</li>
           </ul>
@@ -217,12 +222,27 @@
               </label>
             </div>
             <label>
+              Payment method
+              <select name="payment">
+                <option>Pay at counter</option>
+                <option>GCash / e-wallet inquiry</option>
+                <option>Cash on pickup</option>
+              </select>
+            </label>
+            <label>
               Notes
               <textarea name="notes" placeholder="Less sweet, extra ice, no onions, etc."></textarea>
             </label>
-            <button class="btn" type="submit">Copy Order Message</button>
-            <p class="form-help" data-cart-status aria-live="polite"></p>
+            <button class="btn" type="submit" data-place-order disabled>Place Order</button>
+            <p class="form-help" data-cart-status aria-live="polite">Add at least one item to place an order.</p>
           </form>
+
+          <div class="order-confirmation" data-order-confirmation hidden>
+            <strong>Order placed!</strong>
+            <p data-order-reference></p>
+            <p class="order-confirmation__note">This request is saved in this browser. Final confirmation still depends on café staff contact.</p>
+            <button type="button" data-new-order>Start New Order</button>
+          </div>
         </aside>
       </div>
     </section>
