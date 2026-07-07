@@ -27,8 +27,26 @@
     return '₱' + Number(amount || 0).toLocaleString('en-PH');
   }
 
+  function safeGet(key, fallback) {
+    try {
+      return localStorage.getItem(key) || fallback;
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  function safeSet(key, value) {
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
   function getPasscode() {
-    return localStorage.getItem(PASSCODE_KEY) || DEFAULT_PASSCODE;
+    return safeGet(PASSCODE_KEY, DEFAULT_PASSCODE);
   }
 
   function getOrders() {
@@ -41,19 +59,41 @@
   }
 
   function saveOrders(orders) {
-    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+    safeSet(ORDERS_KEY, JSON.stringify(orders));
   }
 
   function showDashboard() {
-    loginView.hidden = true;
-    dashboard.hidden = false;
+    if (loginView) {
+      loginView.hidden = true;
+      loginView.style.display = 'none';
+    }
+
+    if (dashboard) {
+      dashboard.hidden = false;
+      dashboard.removeAttribute('hidden');
+      dashboard.style.display = 'grid';
+    }
+
+    document.body.classList.add('admin-is-open');
+    setPanel('orders');
     renderOrders();
     loadNotes();
   }
 
   function showLogin() {
-    loginView.hidden = false;
-    dashboard.hidden = true;
+    if (loginView) {
+      loginView.hidden = false;
+      loginView.removeAttribute('hidden');
+      loginView.style.display = 'grid';
+    }
+
+    if (dashboard) {
+      dashboard.hidden = true;
+      dashboard.setAttribute('hidden', '');
+      dashboard.style.display = 'none';
+    }
+
+    document.body.classList.remove('admin-is-open');
   }
 
   function setPanel(name) {
@@ -126,7 +166,9 @@
       ];
       rows.forEach(([label, value]) => {
         const p = document.createElement('p');
-        p.innerHTML = '<strong>' + label + ':</strong> ' + value;
+        const strong = document.createElement('strong');
+        strong.textContent = label + ': ';
+        p.append(strong, String(value));
         meta.appendChild(p);
       });
 
@@ -151,20 +193,31 @@
 
   function loadNotes() {
     if (!menuNoteForm) return;
-    const notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '{}');
+    let notes = {};
+    try {
+      notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '{}');
+    } catch (error) {
+      localStorage.removeItem(NOTES_KEY);
+      notes = {};
+    }
     menuNoteForm.elements.menuNote.value = notes.menuNote || '';
     menuNoteForm.elements.internalNote.value = notes.internalNote || '';
   }
 
   loginForm?.addEventListener('submit', (event) => {
     event.preventDefault();
-    const passcode = new FormData(loginForm).get('passcode');
+    const passcode = String(new FormData(loginForm).get('passcode') || '').trim();
 
     if (passcode === getPasscode()) {
-      sessionStorage.setItem(SESSION_KEY, 'true');
-      loginStatus.textContent = '';
-      showDashboard();
-    } else {
+      try {
+        sessionStorage.setItem(SESSION_KEY, 'true');
+        if (loginStatus) loginStatus.textContent = 'Opening dashboard...';
+        showDashboard();
+      } catch (error) {
+        console.error(error);
+        if (loginStatus) loginStatus.textContent = 'Dashboard failed to open. Check the browser console.';
+      }
+    } else if (loginStatus) {
       loginStatus.textContent = 'Wrong passcode.';
     }
   });
@@ -187,23 +240,29 @@
   menuNoteForm?.addEventListener('submit', (event) => {
     event.preventDefault();
     const data = new FormData(menuNoteForm);
-    localStorage.setItem(NOTES_KEY, JSON.stringify({
+    safeSet(NOTES_KEY, JSON.stringify({
       menuNote: data.get('menuNote'),
       internalNote: data.get('internalNote')
     }));
-    menuNoteStatus.textContent = 'Notes saved.';
+    if (menuNoteStatus) menuNoteStatus.textContent = 'Notes saved.';
   });
 
   passcodeForm?.addEventListener('submit', (event) => {
     event.preventDefault();
-    const newPasscode = new FormData(passcodeForm).get('newPasscode');
-    localStorage.setItem(PASSCODE_KEY, newPasscode);
+    const newPasscode = String(new FormData(passcodeForm).get('newPasscode') || '').trim();
+    if (!newPasscode) return;
+    safeSet(PASSCODE_KEY, newPasscode);
     passcodeForm.reset();
-    passcodeStatus.textContent = 'Passcode updated for this browser.';
+    if (passcodeStatus) passcodeStatus.textContent = 'Passcode updated for this browser.';
   });
 
   if (sessionStorage.getItem(SESSION_KEY) === 'true') {
-    showDashboard();
+    try {
+      showDashboard();
+    } catch (error) {
+      console.error(error);
+      showLogin();
+    }
   } else {
     showLogin();
   }
