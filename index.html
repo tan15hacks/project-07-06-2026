@@ -11,6 +11,17 @@
   <link rel="preload" href="assets/photo-cafe-interior.webp" as="image" type="image/webp" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="polish.css" />
+  <style>
+    .hero__media {
+      background:
+        linear-gradient(90deg, rgba(15, 12, 9, 0.72), rgba(15, 12, 9, 0.24) 52%, rgba(15, 12, 9, 0.58)),
+        url("assets/photo-cafe-interior.webp") center/cover no-repeat !important;
+    }
+
+    .btn::after {
+      content: "→" !important;
+    }
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -61,47 +72,36 @@
 
       <div class="container hero__content">
         <div class="hero__badge">Neighborhood café • Guinobatan, Albay</div>
-        <p class="eyebrow">Specialty coffee • Matcha • Comfort food • Board games</p>
-        <h1>Specialty coffee, cozy meals, and a table for your next hangout.</h1>
+        <p class="eyebrow">Coffee • Matcha • Comfort Food • Board Games</p>
+        <h1>Make today a little better at <span>BLK.8 CAFÉ</span>.</h1>
         <p class="hero__lead">
-          BLK.8 CAFÉ is a warm neighborhood café for quick coffee runs, takeout cravings,
-          study breaks, barkada catch-ups, and slow evenings in Guinobatan.
+          A cozy café spot for good drinks, warm food, takeout runs, study dates,
+          barkada catch-ups, and slow evenings that deserve one more cup.
         </p>
 
         <div class="hero__actions">
-          <a class="btn" href="#order">Build My Order</a>
-          <a class="btn btn--ghost" href="#menu">View Menu</a>
+          <a class="btn" href="#order">Order Now</a>
+          <a class="btn btn--ghost" href="#menu">Explore Menu</a>
           <a class="btn btn--ghost" href="https://www.google.com/maps/search/?api=1&query=BLK.8%20CAF%C3%89%20Guinobatan%20Albay" target="_blank" rel="noopener">Get Directions</a>
         </div>
 
         <div class="hero__stats" aria-label="Cafe highlights">
           <div><strong>4.4★</strong><span>Google rating</span></div>
-          <div><strong>₱95+</strong><span>starting items</span></div>
+          <div><strong>₱1–200</strong><span>Budget-friendly</span></div>
           <div><strong>Dine-in</strong><span>plus takeout</span></div>
           <div><strong>11 PM</strong><span>late closing</span></div>
         </div>
       </div>
     </section>
 
-    <section class="quick-order" aria-label="Quick order prompt">
+    <section class="quick-order">
       <div class="container quick-order__inner">
         <div>
           <p class="eyebrow">Fastest way to order</p>
-          <h2>Pick items, copy your order, then send it to Messenger.</h2>
-          <p>Use the menu cards below to build a clean order message with quantities, notes, pickup time, and an estimated total.</p>
+          <h2>Craving coffee, matcha, or snacks?</h2>
+          <p>Build a clear Messenger order with your name, pickup time, sweetness notes, and food requests in less than a minute.</p>
         </div>
-        <a class="btn" href="#menu">Start with Menu</a>
-      </div>
-    </section>
-
-    <section class="section promo-strip" aria-label="Featured cafe offer">
-      <div class="container promo-card">
-        <div>
-          <p class="eyebrow">Featured combo</p>
-          <h2>Iced coffee + snack break</h2>
-          <p>A simple café pick for afternoon cravings. Add items from the menu and your order form will update automatically.</p>
-        </div>
-        <button class="btn btn--dark" type="button" data-add-item="Iced Coffee" data-price="110">Add Iced Coffee</button>
+        <a class="btn" href="#order">Start Order</a>
       </div>
     </section>
 
@@ -110,9 +110,9 @@
         <div class="section-heading section-heading--split">
           <div>
             <p class="eyebrow">Menu highlights</p>
-            <h2>Coffee, matcha, and comfort food for your café break.</h2>
+            <h2>For coffee people, matcha people, and “tara kain” people.</h2>
           </div>
-          <p>Prices below are editable starting prices. Tap “Add to order” to build a Messenger-ready order summary.</p>
+          <p>Clean cards, crisp photos, and quick filters make it easier for visitors to decide what they want before messaging.</p>
         </div>
 
         <div class="menu-filters" role="tablist" aria-label="Menu categories">
@@ -124,62 +124,62 @@
 
         <div class="menu-grid">
           <article class="menu-card" data-category="drinks">
-            <img src="assets/photo-matcha-latte.webp" alt="Matcha latte in a café glass" loading="lazy" />
+            <img src="assets/photo-matcha-latte.webp" alt="Generated matcha latte photo" loading="lazy" />
             <div class="menu-card__body">
               <span class="pill">Drink</span>
               <h3>Matcha Latte</h3>
               <p>Smooth, green, creamy, and café-photo ready.</p>
-              <div class="menu-card__meta"><strong>₱120</strong><button type="button" data-add-item="Matcha Latte" data-price="120">Add to order</button></div>
+              <strong>Ask current price</strong>
             </div>
           </article>
 
           <article class="menu-card" data-category="drinks">
-            <img src="assets/photo-hot-latte.webp" alt="Hot coffee latte with latte art" loading="lazy" />
+            <img src="assets/photo-hot-latte.webp" alt="Generated hot latte photo" loading="lazy" />
             <div class="menu-card__body">
               <span class="pill">Coffee</span>
               <h3>Hot Coffee Latte</h3>
               <p>Warm cup, soft foam, cozy table energy.</p>
-              <div class="menu-card__meta"><strong>₱95</strong><button type="button" data-add-item="Hot Coffee Latte" data-price="95">Add to order</button></div>
+              <strong>Ask current price</strong>
             </div>
           </article>
 
           <article class="menu-card" data-category="drinks">
-            <img src="assets/photo-iced-coffee.webp" alt="Iced coffee with ice cubes" loading="lazy" />
+            <img src="assets/photo-iced-coffee.webp" alt="Generated iced coffee photo" loading="lazy" />
             <div class="menu-card__body">
               <span class="pill">Iced</span>
               <h3>Iced Coffee</h3>
               <p>Cool, creamy, and made for Albay afternoons.</p>
-              <div class="menu-card__meta"><strong>₱110</strong><button type="button" data-add-item="Iced Coffee" data-price="110">Add to order</button></div>
+              <strong>Ask current price</strong>
             </div>
           </article>
 
           <article class="menu-card" data-category="food">
-            <img src="assets/photo-burger-fries.webp" alt="Burger and fries meal" loading="lazy" />
+            <img src="assets/photo-burger-fries.webp" alt="Generated burger and fries photo" loading="lazy" />
             <div class="menu-card__body">
               <span class="pill">Food</span>
               <h3>Burger & Fries</h3>
               <p>A filling café meal for barkada visits.</p>
-              <div class="menu-card__meta"><strong>₱159</strong><button type="button" data-add-item="Burger & Fries" data-price="159">Add to order</button></div>
+              <strong>Ask current price</strong>
             </div>
           </article>
 
           <article class="menu-card" data-category="food">
-            <img src="assets/photo-rice-meal.webp" alt="Rice meal with egg" loading="lazy" />
+            <img src="assets/photo-rice-meal.webp" alt="Generated rice meal photo" loading="lazy" />
             <div class="menu-card__body">
               <span class="pill">Meal</span>
               <h3>Rice Meals</h3>
               <p>Comfort food for lunch, dinner, and cravings.</p>
-              <div class="menu-card__meta"><strong>₱149</strong><button type="button" data-add-item="Rice Meal" data-price="149">Add to order</button></div>
+              <strong>Ask current price</strong>
             </div>
           </article>
 
           <article class="menu-card" data-category="snacks">
-            <img src="assets/photo-pasta.webp" alt="Café-style pasta dish" loading="lazy" />
+            <img src="assets/photo-pasta.webp" alt="Generated pasta photo" loading="lazy" />
             <div class="menu-card__body">
               <span class="pill">Snack</span>
               <h3>Pasta & Snacks</h3>
               <p>Pair with coffee when one drink is not enough.</p>
-              <div class="menu-card__meta"><strong>₱139</strong><button type="button" data-add-item="Pasta & Snacks" data-price="139">Add to order</button></div>
+              <strong>Ask current price</strong>
             </div>
           </article>
         </div>
@@ -192,90 +192,22 @@
           <p class="eyebrow">Dine-in experience</p>
           <h2>Come for the drinks. Stay for the mood.</h2>
           <p>
-            BLK.8 CAFÉ is built for relaxed visits: warm lighting, cozy tables, board games,
-            comfort food, and enough quiet corners for study dates or slow conversations.
+            BLK.8 CAFÉ feels like the kind of neighborhood spot people save on Maps:
+            warm lighting, cozy tables, board games, and comfort food that turns
+            “quick coffee” into a longer hangout.
           </p>
           <div class="feature-list">
             <div><span>01</span><p>Board games for friends, families, and casual dates.</p></div>
             <div><span>02</span><p>Dine-in and takeout options for flexible cravings.</p></div>
-            <div><span>03</span><p>Order builder helps customers prepare a clear message before contacting the café.</p></div>
+            <div><span>03</span><p>Clear CTAs and polished visuals built to convert visitors into orders.</p></div>
           </div>
           <a class="btn btn--dark" href="#location">Plan Your Visit</a>
         </div>
-        <div class="photo-stack" aria-label="Cafe food and drinks photo gallery">
-          <img src="assets/photo-cafe-interior.webp" alt="Cozy BLK.8 CAFÉ interior" loading="lazy" />
-          <img src="assets/photo-desserts.webp" alt="Café desserts and takeout cups" loading="lazy" />
-          <img src="assets/photo-matcha-latte.webp" alt="Matcha latte at BLK.8 CAFÉ" loading="lazy" />
+        <div class="photo-stack" aria-label="Generated cafe food and drinks photo gallery">
+          <img src="assets/photo-cafe-interior.webp" alt="Generated cozy BLK.8 CAFÉ interior photo" loading="lazy" />
+          <img src="assets/photo-desserts.webp" alt="Generated café desserts and takeout cups photo" loading="lazy" />
+          <img src="assets/photo-matcha-latte.webp" alt="Generated matcha latte at BLK.8 CAFÉ" loading="lazy" />
         </div>
-      </div>
-    </section>
-
-    <section class="section section--cream" id="order">
-      <div class="container order-grid">
-        <div class="order-copy">
-          <p class="eyebrow">Order online</p>
-          <h2>Your order summary is ready to copy.</h2>
-          <p>
-            Add menu items, choose your order type, add notes, then copy the message for Messenger.
-            When the official Messenger link is added, this can open Messenger automatically.
-          </p>
-
-          <div class="order-summary" aria-live="polite">
-            <div class="order-summary__top">
-              <strong>Selected items</strong>
-              <button type="button" data-clear-order>Clear</button>
-            </div>
-            <ul data-order-list>
-              <li>No items yet. Add something from the menu.</li>
-            </ul>
-            <p class="order-total">Estimated total: <strong data-order-total>₱0</strong></p>
-          </div>
-
-          <div class="notice">
-            <strong>Before launch</strong>
-            <p>Replace sample prices with official menu prices and add the real BLK.8 CAFÉ Messenger link in <code>script.js</code>.</p>
-          </div>
-        </div>
-
-        <form class="order-form" data-order-form>
-          <label>
-            Name
-            <input type="text" name="name" placeholder="Juan Dela Cruz" required />
-          </label>
-
-          <label>
-            Contact number or Messenger name
-            <input type="text" name="contact" placeholder="09xx xxx xxxx" required />
-          </label>
-
-          <label>
-            Order details
-            <textarea name="items" placeholder="Add items from the menu or type your order here" required></textarea>
-          </label>
-
-          <div class="form-row">
-            <label>
-              Order type
-              <select name="type">
-                <option>Pickup / Takeout</option>
-                <option>Dine-in reservation inquiry</option>
-              </select>
-            </label>
-
-            <label>
-              Preferred time
-              <input type="text" name="time" placeholder="Today, 5:30 PM" />
-            </label>
-          </div>
-
-          <label>
-            Notes
-            <textarea name="notes" placeholder="Less sweet, extra ice, payment reference, etc."></textarea>
-          </label>
-
-          <button class="btn" type="submit">Copy Order Message</button>
-          <p class="form-help" data-form-status aria-live="polite"></p>
-        </form>
       </div>
     </section>
 
@@ -286,7 +218,7 @@
             <p class="eyebrow">Loved by locals</p>
             <h2>Social proof that makes people confident to visit.</h2>
           </div>
-          <p>Short review cards keep trust visible without making the page feel crowded.</p>
+          <p>Short, scannable review cards keep trust visible without making the page feel crowded.</p>
         </div>
 
         <div class="review-grid">
@@ -316,16 +248,74 @@
             <p class="eyebrow">Gallery</p>
             <h2>Make the menu look as craveable as it tastes.</h2>
           </div>
-          <p>Photos are optimized for fast loading on mobile and desktop.</p>
+          <p>All visuals below are local generated photos, optimized for fast loading on mobile and desktop.</p>
         </div>
         <div class="gallery">
-          <img src="assets/photo-matcha-latte.webp" alt="Matcha latte" loading="lazy" />
-          <img src="assets/photo-hot-latte.webp" alt="Hot latte" loading="lazy" />
-          <img src="assets/photo-burger-fries.webp" alt="Burger and fries" loading="lazy" />
-          <img src="assets/photo-rice-meal.webp" alt="Rice meal" loading="lazy" />
-          <img src="assets/photo-pasta.webp" alt="Pasta" loading="lazy" />
-          <img src="assets/photo-iced-coffee.webp" alt="Iced coffee" loading="lazy" />
+          <img src="assets/photo-matcha-latte.webp" alt="Generated matcha latte" loading="lazy" />
+          <img src="assets/photo-hot-latte.webp" alt="Generated hot latte" loading="lazy" />
+          <img src="assets/photo-burger-fries.webp" alt="Generated burger and fries" loading="lazy" />
+          <img src="assets/photo-rice-meal.webp" alt="Generated rice meal" loading="lazy" />
+          <img src="assets/photo-pasta.webp" alt="Generated pasta" loading="lazy" />
+          <img src="assets/photo-iced-coffee.webp" alt="Generated iced coffee" loading="lazy" />
         </div>
+      </div>
+    </section>
+
+    <section class="section section--cream" id="order">
+      <div class="container order-grid">
+        <div class="order-copy">
+          <p class="eyebrow">Order online</p>
+          <h2>Ready when you are.</h2>
+          <p>
+            This lightweight order form creates a clean Messenger-ready message.
+            Replace the placeholder Messenger link in <code>script.js</code> with the official BLK.8 CAFÉ page link before publishing.
+          </p>
+
+          <div class="notice">
+            <strong>Launch checklist</strong>
+            <p>Add exact menu prices, payment details, contact number, and the official Messenger link before going live.</p>
+          </div>
+        </div>
+
+        <form class="order-form" data-order-form>
+          <label>
+            Name
+            <input type="text" name="name" placeholder="Juan Dela Cruz" required />
+          </label>
+
+          <label>
+            Contact number or Messenger name
+            <input type="text" name="contact" placeholder="09xx xxx xxxx" required />
+          </label>
+
+          <label>
+            Order details
+            <textarea name="items" placeholder="Example: 2 iced coffee, 1 matcha latte, 1 burger & fries" required></textarea>
+          </label>
+
+          <div class="form-row">
+            <label>
+              Order type
+              <select name="type">
+                <option>Pickup / Takeout</option>
+                <option>Dine-in reservation inquiry</option>
+              </select>
+            </label>
+
+            <label>
+              Preferred time
+              <input type="text" name="time" placeholder="Today, 5:30 PM" />
+            </label>
+          </div>
+
+          <label>
+            Notes
+            <textarea name="notes" placeholder="Less sweet, extra ice, payment reference, etc."></textarea>
+          </label>
+
+          <button class="btn" type="submit">Create Messenger Order</button>
+          <p class="form-help" data-form-status aria-live="polite"></p>
+        </form>
       </div>
     </section>
 
@@ -338,9 +328,7 @@
             <div><span>Address</span><p>5HVW+CW4, Rizal St, Ilaod, Guinobatan, Albay</p></div>
             <div><span>Landmark</span><p>Located in MEDICUS CLINIC</p></div>
             <div><span>Service options</span><p>Dine-in • Takeout</p></div>
-            <div><span>Hours</span><p>Open daily • Closes 11 PM</p></div>
-            <div><span>Payments</span><p>Confirm available payment options before ordering.</p></div>
-            <div><span>Socials</span><p>Add official Facebook, Instagram, and TikTok links before launch.</p></div>
+            <div><span>Hours</span><p>Open • Closes 11 PM</p></div>
           </div>
         </div>
 
@@ -348,38 +336,8 @@
           <div class="map-card__mock">
             <span>BLK.8 CAFÉ</span>
             <p>Rizal St, Ilaod, Guinobatan, Albay</p>
-            <div class="map-card__actions">
-              <a class="btn btn--small" href="https://www.google.com/maps/search/?api=1&query=BLK.8%20CAF%C3%89%20Guinobatan%20Albay" target="_blank" rel="noopener">Google Maps</a>
-              <a class="btn btn--small btn--ghost-dark" href="https://waze.com/ul?q=BLK.8%20CAF%C3%89%20Guinobatan%20Albay" target="_blank" rel="noopener">Waze</a>
-            </div>
+            <a class="btn btn--small" href="https://www.google.com/maps/search/?api=1&query=BLK.8%20CAF%C3%89%20Guinobatan%20Albay" target="_blank" rel="noopener">Open in Google Maps</a>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section--cream faq-section" id="faq">
-      <div class="container">
-        <div class="section-heading">
-          <p class="eyebrow">FAQ</p>
-          <h2>Quick answers before you visit.</h2>
-        </div>
-        <div class="faq-grid">
-          <details>
-            <summary>Do you accept dine-in?</summary>
-            <p>Yes. The café supports dine-in and takeout.</p>
-          </details>
-          <details>
-            <summary>Can I order ahead?</summary>
-            <p>Yes. Use the order builder, copy the message, and send it through the café’s official Messenger once linked.</p>
-          </details>
-          <details>
-            <summary>Are prices final?</summary>
-            <p>Prices shown are starting/sample prices and should be replaced with the official menu before launch.</p>
-          </details>
-          <details>
-            <summary>Where is BLK.8 CAFÉ located?</summary>
-            <p>Rizal St, Ilaod, Guinobatan, Albay, near MEDICUS CLINIC.</p>
-          </details>
         </div>
       </div>
     </section>
@@ -392,7 +350,7 @@
           <p>Order ahead, bring your friends, or visit for a cozy dine-in break.</p>
         </div>
         <div class="final-cta__actions">
-          <a class="btn" href="#order">Build My Order</a>
+          <a class="btn" href="#order">Order Now</a>
           <a class="btn btn--ghost" href="#location">Get Directions</a>
         </div>
       </div>
