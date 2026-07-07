@@ -8,6 +8,7 @@
   <title>BLK.8 Admin</title>
   <link rel="icon" href="assets/logo.svg" />
   <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="admin-reports.css" />
 </head>
 <body>
   <main class="admin-shell">
@@ -183,18 +184,102 @@
         </section>
 
         <section class="admin-panel" data-panel="reports">
-          <div class="panel-card">
-            <div class="panel-heading">
+          <div class="report-workspace" data-report-content>
+            <div class="report-hero panel-card">
               <div>
-                <h2>Reports & exports</h2>
-                <p>Export local order data for Excel, Google Sheets, or backup.</p>
+                <p class="eyebrow">Analytics report</p>
+                <h2>Sales, orders, menu, and category performance</h2>
+                <p>Charts and tables are generated from locally stored orders and admin menu data.</p>
+                <p class="report-updated" data-report-updated>Last updated: —</p>
               </div>
-              <div class="button-row">
-                <button type="button" data-export-csv>Export CSV</button>
-                <button type="button" data-export-json>Export JSON</button>
+              <div class="report-actions">
+                <button type="button" data-export-excel>Export Excel</button>
+                <button type="button" data-export-pdf>Export PDF</button>
               </div>
             </div>
-            <div class="report-summary" data-report-summary></div>
+
+            <section>
+              <div class="report-section-heading">
+                <div>
+                  <p class="eyebrow">Summary</p>
+                  <h2>Report overview</h2>
+                </div>
+              </div>
+              <div class="report-kpi-grid" data-report-kpis></div>
+            </section>
+
+            <section>
+              <div class="report-section-heading">
+                <div>
+                  <p class="eyebrow">Charts analysis</p>
+                  <h2>Orders and sales trends</h2>
+                </div>
+              </div>
+              <div class="report-chart-grid" data-report-charts></div>
+            </section>
+
+            <section class="report-table-grid">
+              <article class="panel-card">
+                <div class="panel-heading compact">
+                  <div>
+                    <h2>Yearly orders and sales</h2>
+                    <p>Includes 2024, 2025, and every available year onward.</p>
+                  </div>
+                </div>
+                <div class="report-table-wrap" data-report-yearly-table></div>
+              </article>
+
+              <article class="panel-card">
+                <div class="panel-heading compact">
+                  <div>
+                    <h2>Monthly performance</h2>
+                    <p>Current year breakdown by month.</p>
+                  </div>
+                </div>
+                <div class="report-table-wrap" data-report-monthly-table></div>
+              </article>
+
+              <article class="panel-card">
+                <div class="panel-heading compact">
+                  <div>
+                    <h2>Weekly and daily performance</h2>
+                    <p>Recent operating trend for short-term tracking.</p>
+                  </div>
+                </div>
+                <div class="report-table-wrap" data-report-weekly-table></div>
+              </article>
+
+              <article class="panel-card">
+                <div class="panel-heading compact">
+                  <div>
+                    <h2>Menu item performance</h2>
+                    <p>Sold quantity, revenue, category, and item pricing.</p>
+                  </div>
+                </div>
+                <div class="report-table-wrap" data-report-menu-table></div>
+              </article>
+
+              <article class="panel-card">
+                <div class="panel-heading compact">
+                  <div>
+                    <h2>Categories and order mix</h2>
+                    <p>Menu categories, order statuses, payment methods, and order types.</p>
+                  </div>
+                </div>
+                <div class="report-table-wrap" data-report-category-table></div>
+                <div class="report-table-wrap" data-report-status-table></div>
+              </article>
+
+              <article class="panel-card">
+                <div class="panel-heading compact">
+                  <div>
+                    <h2>Order details</h2>
+                    <p>Full order records included in Excel and PDF exports.</p>
+                  </div>
+                </div>
+                <div class="report-table-wrap" data-report-order-table></div>
+              </article>
+            </section>
           </div>
         </section>
 
@@ -244,5 +329,6 @@
   </main>
 
   <script src="admin.js" defer></script>
+  <script src="admin-reports.js" defer></script>
 </body>
 </html>
