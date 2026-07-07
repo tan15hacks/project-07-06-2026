@@ -1,8 +1,18 @@
 (() => {
+  const MENU_KEY = 'blk8-menu-items';
+  const ORDERS_KEY = 'blk8-placed-orders';
+  const DEFAULT_MENU_ITEMS = [
+    { id: 'matcha-latte', name: 'Matcha Latte', price: 120, category: 'drinks', label: 'Drink', image: 'assets/photo-matcha-latte.webp', description: 'Creamy matcha with a smooth café finish.', available: true },
+    { id: 'hot-coffee-latte', name: 'Hot Coffee Latte', price: 95, category: 'drinks', label: 'Coffee', image: 'assets/photo-hot-latte.webp', description: 'Warm coffee, soft foam, and cozy table energy.', available: true },
+    { id: 'iced-coffee', name: 'Iced Coffee', price: 110, category: 'drinks', label: 'Iced', image: 'assets/photo-iced-coffee.webp', description: 'Cold, creamy, and made for warm Albay afternoons.', available: true },
+    { id: 'burger-fries', name: 'Burger & Fries', price: 159, category: 'food', label: 'Food', image: 'assets/photo-burger-fries.webp', description: 'A filling café meal for barkada visits.', available: true },
+    { id: 'rice-meal', name: 'Rice Meal', price: 149, category: 'food', label: 'Meal', image: 'assets/photo-rice-meal.webp', description: 'Comfort food for lunch, dinner, and cravings.', available: true },
+    { id: 'pasta-snacks', name: 'Pasta & Snacks', price: 139, category: 'snacks', label: 'Snack', image: 'assets/photo-pasta.webp', description: 'Pair with coffee when one drink is not enough.', available: true }
+  ];
+
   const cart = new Map();
-  const menuAddButtons = document.querySelectorAll('[data-add-order]');
+  const menuGrid = document.querySelector('.order-menu-grid');
   const menuFilterButtons = document.querySelectorAll('[data-menu-filter]');
-  const menuItems = document.querySelectorAll('[data-menu-category]');
   const cartList = document.querySelector('[data-cart-list]');
   const cartTotal = document.querySelector('[data-cart-total]');
   const cartMiniTotal = document.querySelector('[data-cart-mini-total]');
@@ -15,10 +25,21 @@
   const confirmation = document.querySelector('[data-order-confirmation]');
   const orderReference = document.querySelector('[data-order-reference]');
   const newOrderButton = document.querySelector('[data-new-order]');
-  const ORDERS_KEY = 'blk8-placed-orders';
+  let activeFilter = 'all';
 
   function formatPeso(amount) {
-    return '₱' + amount.toLocaleString('en-PH');
+    return '₱' + Number(amount || 0).toLocaleString('en-PH');
+  }
+
+  function getMenuItems() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(MENU_KEY) || 'null');
+      if (Array.isArray(saved) && saved.length) return saved;
+    } catch (error) {
+      localStorage.removeItem(MENU_KEY);
+    }
+    localStorage.setItem(MENU_KEY, JSON.stringify(DEFAULT_MENU_ITEMS));
+    return [...DEFAULT_MENU_ITEMS];
   }
 
   function getTotal() {
@@ -44,9 +65,68 @@
     if (type) statusText.classList.add(type);
   }
 
+  function createMenuCard(item) {
+    const article = document.createElement('article');
+    article.className = 'order-item';
+    article.dataset.menuCategory = item.category;
+    article.dataset.menuItem = item.id;
+
+    const img = document.createElement('img');
+    img.src = item.image || 'assets/photo-iced-coffee.webp';
+    img.alt = item.name;
+    img.loading = 'lazy';
+    img.onerror = function () {
+      img.src = 'assets/photo-iced-coffee.webp';
+    };
+
+    const body = document.createElement('div');
+    const pill = document.createElement('span');
+    pill.className = 'pill';
+    pill.textContent = item.label || item.category;
+    const title = document.createElement('h3');
+    title.textContent = item.name;
+    const desc = document.createElement('p');
+    desc.textContent = item.description || 'Freshly prepared café item.';
+
+    const bottom = document.createElement('div');
+    bottom.className = 'order-item__bottom';
+    const price = document.createElement('strong');
+    price.textContent = formatPeso(item.price);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.addOrder = 'true';
+    button.dataset.id = item.id;
+    button.dataset.name = item.name;
+    button.dataset.price = String(item.price);
+    button.textContent = 'Add';
+
+    bottom.append(price, button);
+    body.append(pill, title, desc, bottom);
+    article.append(img, body);
+    return article;
+  }
+
+  function renderMenu() {
+    if (!menuGrid) return;
+    const items = getMenuItems().filter((item) => item.available !== false);
+    const visibleItems = items.filter((item) => activeFilter === 'all' || item.category === activeFilter);
+    menuGrid.replaceChildren();
+
+    if (!visibleItems.length) {
+      const empty = document.createElement('div');
+      empty.className = 'cart-empty';
+      empty.textContent = 'No menu items available in this category yet.';
+      menuGrid.appendChild(empty);
+      return;
+    }
+
+    visibleItems.forEach((item) => menuGrid.appendChild(createMenuCard(item)));
+    updateAddButtons();
+  }
+
   function updateAddButtons() {
-    menuAddButtons.forEach(function (button) {
-      const item = cart.get(button.dataset.name);
+    document.querySelectorAll('[data-add-order]').forEach(function (button) {
+      const item = cart.get(button.dataset.id || button.dataset.name);
       const card = button.closest('.order-item');
       if (item) {
         button.textContent = 'Add (' + item.quantity + ')';
@@ -94,48 +174,42 @@
 
       const top = document.createElement('div');
       top.className = 'cart-item__top';
-
       const titleWrap = document.createElement('div');
       const name = document.createElement('span');
       const unit = document.createElement('small');
       name.textContent = item.name;
       unit.textContent = formatPeso(item.price) + ' each';
       titleWrap.append(name, unit);
-
       const subtotal = document.createElement('strong');
       subtotal.textContent = formatPeso(item.price * item.quantity);
       top.append(titleWrap, subtotal);
 
       const controls = document.createElement('div');
       controls.className = 'cart-item__controls';
-
       const minus = document.createElement('button');
       minus.type = 'button';
       minus.textContent = '−';
       minus.addEventListener('click', function () {
         item.quantity -= 1;
-        if (item.quantity <= 0) cart.delete(item.name);
+        if (item.quantity <= 0) cart.delete(item.id);
         renderCart();
       });
-
       const quantity = document.createElement('span');
       quantity.className = 'cart-qty';
       quantity.textContent = 'Qty: ' + item.quantity;
-
       const plus = document.createElement('button');
       plus.type = 'button';
       plus.textContent = '+';
       plus.addEventListener('click', function () {
         item.quantity += 1;
-        cart.set(item.name, item);
+        cart.set(item.id, item);
         renderCart();
       });
-
       const remove = document.createElement('button');
       remove.type = 'button';
       remove.textContent = 'Remove';
       remove.addEventListener('click', function () {
-        cart.delete(item.name);
+        cart.delete(item.id);
         renderCart();
         setStatus(item.name + ' removed from order.');
       });
@@ -165,16 +239,17 @@
     localStorage.setItem(ORDERS_KEY, JSON.stringify(orders.slice(0, 50)));
   }
 
-  menuAddButtons.forEach(function (button) {
-    button.addEventListener('click', function () {
-      const name = button.dataset.name;
-      const price = Number(button.dataset.price || 0);
-      const item = cart.get(name) || { name: name, price: price, quantity: 0 };
-      item.quantity += 1;
-      cart.set(name, item);
-      renderCart();
-      setStatus(name + ' added to order.', 'is-success');
-    });
+  menuGrid?.addEventListener('click', function (event) {
+    const button = event.target.closest('[data-add-order]');
+    if (!button) return;
+    const id = button.dataset.id || button.dataset.name;
+    const name = button.dataset.name;
+    const price = Number(button.dataset.price || 0);
+    const item = cart.get(id) || { id: id, name: name, price: price, quantity: 0 };
+    item.quantity += 1;
+    cart.set(id, item);
+    renderCart();
+    setStatus(name + ' added to order.', 'is-success');
   });
 
   clearCartButton?.addEventListener('click', function () {
@@ -185,14 +260,11 @@
 
   menuFilterButtons.forEach(function (button) {
     button.addEventListener('click', function () {
-      const category = button.dataset.menuFilter;
+      activeFilter = button.dataset.menuFilter;
       menuFilterButtons.forEach(function (btn) {
         btn.classList.toggle('is-active', btn === button);
       });
-      menuItems.forEach(function (item) {
-        const show = category === 'all' || item.dataset.menuCategory === category;
-        item.hidden = !show;
-      });
+      renderMenu();
     });
   });
 
@@ -243,5 +315,12 @@
     setStatus('New order started. Add items from the menu.');
   });
 
+  window.addEventListener('storage', function (event) {
+    if (event.key === MENU_KEY) {
+      renderMenu();
+    }
+  });
+
+  renderMenu();
   renderCart();
 })();
