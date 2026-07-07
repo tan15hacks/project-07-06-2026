@@ -1,8 +1,11 @@
 {
   "scripts": {
-    "build": "node -e \"const fs=require('fs'); const path=require('path'); const out='public'; fs.rmSync(out,{recursive:true,force:true}); fs.mkdirSync(out,{recursive:true}); for (const item of ['index.html','menu.html','blk8-admin.html','blk8-admin','styles.css','polish.css','menu.css','admin.css','admin-reports.css','admin-interactions.css','script.js','menu.js','admin.js','admin-reports.js','assets']) { if (fs.existsSync(item)) fs.cpSync(item,path.join(out,item),{recursive:true}); }\"",
+    "build": "node -e \"const fs=require('fs'); const path=require('path'); const out='public'; fs.rmSync(out,{recursive:true,force:true}); fs.mkdirSync(out,{recursive:true}); for (const item of ['index.html','menu.html','blk8-admin.html','blk8-admin','styles.css','polish.css','menu.css','admin.css','admin-reports.css','admin-interactions.css','script.js','menu.js','admin.js','admin-reports.js','neon-bridge.js','assets']) { if (fs.existsSync(item)) fs.cpSync(item,path.join(out,item),{recursive:true}); }\"",
     "start": "python -m http.server 5173",
     "serve": "python -m http.server 5173"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.0"
   },
   "devDependencies": {}
 }
