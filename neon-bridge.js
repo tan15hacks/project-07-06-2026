@@ -8,6 +8,7 @@
   const syncTimers = new Map();
   let pullingFromNeon = false;
   let apiIsAvailable = false;
+  let apiBase = '';
 
   const originalSetItem = Storage.prototype.setItem;
   const originalRemoveItem = Storage.prototype.removeItem;
@@ -21,17 +22,37 @@
     }
   }
 
-  async function request(path, options = {}) {
-    const response = await fetch(path, {
+  function localApiCandidates() {
+    const origin = window.location.origin;
+    const candidates = [origin];
+
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      ['3000', '3001', '3002', '5173'].forEach((port) => {
+        const candidate = `${window.location.protocol}//${window.location.hostname}:${port}`;
+        if (!candidates.includes(candidate)) candidates.push(candidate);
+      });
+    }
+
+    return candidates;
+  }
+
+  async function fetchJson(url, options = {}) {
+    const response = await fetch(url, {
       headers: { 'Content-Type': 'application/json' },
       ...options
     });
 
     const data = await response.json().catch(() => ({}));
     if (!response.ok || data.ok === false) {
-      throw new Error(data.error || `Request failed: ${path}`);
+      throw new Error(data.error || `Request failed: ${url}`);
     }
     return data;
+  }
+
+  async function request(path, options = {}) {
+    if (!apiBase) await checkApi();
+    if (!apiBase) throw new Error('No local Neon API server found. Run npx vercel dev.');
+    return fetchJson(`${apiBase}${path}`, options);
   }
 
   function dispatchStorage(key) {
@@ -50,15 +71,22 @@
   }
 
   async function checkApi() {
-    try {
-      await request('/api/health');
-      apiIsAvailable = true;
-      return true;
-    } catch (error) {
-      apiIsAvailable = false;
-      console.warn('[BLK.8 Neon] API unavailable. Staying in local browser mode.', error.message);
-      return false;
+    for (const candidate of localApiCandidates()) {
+      try {
+        await fetchJson(`${candidate}/api/health`);
+        apiBase = candidate;
+        apiIsAvailable = true;
+        console.info(`[BLK.8 Neon] API connected at ${apiBase}`);
+        return true;
+      } catch (error) {
+        // Try the next local port.
+      }
     }
+
+    apiBase = '';
+    apiIsAvailable = false;
+    console.warn('[BLK.8 Neon] API unavailable. Staying in local browser mode. Run npx vercel dev and check /api/health.');
+    return false;
   }
 
   async function pullCategories() {
@@ -92,7 +120,8 @@
   }
 
   async function syncKey(key) {
-    if (pullingFromNeon || !apiIsAvailable || !watchedKeys.has(key)) return;
+    if (pullingFromNeon || !watchedKeys.has(key)) return;
+    if (!apiIsAvailable && !(await checkApi())) return;
 
     try {
       if (key === KEYS.categories) {
@@ -136,7 +165,9 @@
     pullMenu,
     pullCategories,
     syncKey,
-    isAvailable: () => apiIsAvailable
+    checkApi,
+    isAvailable: () => apiIsAvailable,
+    apiBase: () => apiBase
   };
 
   document.addEventListener('DOMContentLoaded', pullAll);
