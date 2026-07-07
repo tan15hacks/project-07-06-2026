@@ -3,9 +3,16 @@
   const SESSION_KEY = 'blk8-admin-session';
   const PASSCODE_KEY = 'blk8-admin-passcode';
   const ORDERS_KEY = 'blk8-placed-orders';
-  const NOTES_KEY = 'blk8-admin-notes';
   const MENU_KEY = 'blk8-menu-items';
+  const CATEGORIES_KEY = 'blk8-menu-categories';
   const SEEN_ORDER_KEY = 'blk8-last-seen-order';
+  const FALLBACK_IMAGE = 'assets/photo-iced-coffee.webp';
+
+  const DEFAULT_CATEGORIES = [
+    { id: 'drinks', name: 'Drinks' },
+    { id: 'food', name: 'Food' },
+    { id: 'snacks', name: 'Snacks' }
+  ];
 
   const DEFAULT_MENU_ITEMS = [
     { id: 'matcha-latte', name: 'Matcha Latte', price: 120, category: 'drinks', label: 'Drink', image: 'assets/photo-matcha-latte.webp', description: 'Creamy matcha with a smooth café finish.', available: true },
@@ -33,6 +40,13 @@
   const menuList = document.querySelector('[data-menu-list]');
   const resetMenuForm = document.querySelector('[data-reset-menu-form]');
   const resetMenu = document.querySelector('[data-reset-menu]');
+  const categorySelect = document.querySelector('[data-category-select]');
+  const categoryModal = document.querySelector('[data-category-modal]');
+  const openCategoryModal = document.querySelector('[data-open-category-modal]');
+  const closeCategoryButtons = document.querySelectorAll('[data-close-category-modal]');
+  const categoryForm = document.querySelector('[data-category-form]');
+  const categoryStatus = document.querySelector('[data-category-status]');
+  const imagePreview = document.querySelector('[data-image-preview]');
   const exportCsv = document.querySelector('[data-export-csv]');
   const exportJson = document.querySelector('[data-export-json]');
   const reportSummary = document.querySelector('[data-report-summary]');
@@ -76,6 +90,10 @@
     return String(text || 'item').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'item';
   }
 
+  function titleCase(text) {
+    return String(text || '').trim().replace(/\s+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+
   function getOrders() {
     try { return JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]'); }
     catch (error) { localStorage.removeItem(ORDERS_KEY); return []; }
@@ -85,19 +103,98 @@
     safeSet(ORDERS_KEY, JSON.stringify(orders));
   }
 
-  function getMenuItems() {
+  function getCategories() {
+    let categories = [];
+    try {
+      const saved = JSON.parse(localStorage.getItem(CATEGORIES_KEY) || 'null');
+      if (Array.isArray(saved) && saved.length) categories = saved;
+    } catch (error) {
+      localStorage.removeItem(CATEGORIES_KEY);
+    }
+
+    if (!categories.length) categories = [...DEFAULT_CATEGORIES];
+
+    getMenuItems(false).forEach((item) => {
+      if (item.category && !categories.some((category) => category.id === item.category)) {
+        categories.push({ id: item.category, name: titleCase(item.category.replace(/-/g, ' ')) });
+      }
+    });
+
+    safeSet(CATEGORIES_KEY, JSON.stringify(categories));
+    return categories;
+  }
+
+  function saveCategories(categories) {
+    safeSet(CATEGORIES_KEY, JSON.stringify(categories));
+  }
+
+  function getMenuItems(syncCategories = true) {
+    let items = [];
     try {
       const saved = JSON.parse(localStorage.getItem(MENU_KEY) || 'null');
-      if (Array.isArray(saved) && saved.length) return saved;
+      if (Array.isArray(saved) && saved.length) items = saved;
     } catch (error) {
       localStorage.removeItem(MENU_KEY);
     }
-    saveMenuItems(DEFAULT_MENU_ITEMS);
-    return [...DEFAULT_MENU_ITEMS];
+
+    if (!items.length) items = [...DEFAULT_MENU_ITEMS];
+
+    items = items.map((item) => ({
+      ...item,
+      image: item.image || FALLBACK_IMAGE,
+      available: true
+    }));
+
+    safeSet(MENU_KEY, JSON.stringify(items));
+    if (syncCategories) getCategories();
+    return items;
   }
 
   function saveMenuItems(items) {
-    safeSet(MENU_KEY, JSON.stringify(items));
+    safeSet(MENU_KEY, JSON.stringify(items.map((item) => ({ ...item, available: true }))));
+  }
+
+  function readImageFile(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        resolve('');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function updateImagePreview(src) {
+    if (!imagePreview) return;
+    if (!src) {
+      imagePreview.textContent = 'No image uploaded yet. A default image will be used.';
+      return;
+    }
+    imagePreview.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = 'Menu item preview';
+    const text = document.createElement('span');
+    text.textContent = src.startsWith('data:') ? 'Uploaded image ready.' : src;
+    imagePreview.append(img, text);
+  }
+
+  function renderCategoryOptions(selectedValue) {
+    if (!categorySelect) return;
+    const categories = getCategories();
+    categorySelect.replaceChildren();
+    categories.forEach((category) => {
+      const option = document.createElement('option');
+      option.value = category.id;
+      option.textContent = category.name;
+      categorySelect.appendChild(option);
+    });
+    if (selectedValue && categories.some((category) => category.id === selectedValue)) {
+      categorySelect.value = selectedValue;
+    }
   }
 
   function showDashboard() {
@@ -128,8 +225,7 @@
   function calculateAnalytics() {
     const orders = getOrders();
     const todayKey = new Date().toISOString().slice(0, 10);
-    const completeStatuses = new Set(['pending', 'ready', 'complete']);
-    const countedOrders = orders.filter((order) => completeStatuses.has(order.status || 'pending'));
+    const countedOrders = orders.filter((order) => ['pending', 'ready', 'complete'].includes(order.status || 'pending'));
     const todayOrders = countedOrders.filter((order) => getOrderDate(order).toISOString().slice(0, 10) === todayKey);
     const completed = orders.filter((order) => order.status === 'complete');
     const pending = orders.filter((order) => !order.status || order.status === 'pending');
@@ -173,13 +269,13 @@
     if (statRefs.ordersPendingPanel) statRefs.ordersPendingPanel.textContent = String(data.pending.length);
     if (statRefs.ordersCompletePanel) statRefs.ordersCompletePanel.textContent = String(data.completed.length);
 
-    renderAnalyticsList(statRefs.topItems, data.topItems, 'items');
+    renderTopItems(statRefs.topItems, data.topItems);
     renderSalesByDay(statRefs.salesByDay, data.salesByDay);
     renderNotifications(data.orders);
     renderReportSummary(data);
   }
 
-  function renderAnalyticsList(target, rows, type) {
+  function renderTopItems(target, rows) {
     if (!target) return;
     target.replaceChildren();
     if (!rows.length) {
@@ -255,7 +351,7 @@
     orders.forEach((order) => {
       const card = document.createElement('article');
       card.className = 'order-card';
-
+      const status = order.status || 'pending';
       const top = document.createElement('div');
       top.className = 'order-card__top';
       const title = document.createElement('div');
@@ -265,7 +361,6 @@
       small.textContent = order.createdAt ? new Date(order.createdAt).toLocaleString() : 'No timestamp';
       title.append(h3, small);
       const badge = document.createElement('span');
-      const status = order.status || 'pending';
       badge.className = 'badge is-' + status;
       badge.textContent = status;
       top.append(title, badge);
@@ -314,6 +409,11 @@
     });
   }
 
+  function getCategoryName(categoryId) {
+    const category = getCategories().find((item) => item.id === categoryId);
+    return category?.name || titleCase(String(categoryId || '').replace(/-/g, ' '));
+  }
+
   function renderMenuManager() {
     const items = getMenuItems();
     if (!menuList) return;
@@ -326,7 +426,7 @@
     items.forEach((item) => {
       const row = document.createElement('article');
       row.className = 'menu-admin-item';
-      row.innerHTML = `<div class="menu-admin-item__top"><div><h3>${item.name}</h3><p>${item.category} • ${peso(item.price)}</p></div><span class="badge ${item.available ? '' : 'is-hidden'}">${item.available ? 'visible' : 'hidden'}</span></div><p>${item.description || ''}</p>`;
+      row.innerHTML = `<div class="menu-admin-item__top"><div><h3>${item.name}</h3><p>${getCategoryName(item.category)} • ${peso(item.price)}</p></div><span class="badge">visible</span></div><p>${item.description || ''}</p>`;
 
       const actions = document.createElement('div');
       actions.className = 'menu-admin-item__actions';
@@ -334,15 +434,6 @@
       edit.type = 'button';
       edit.textContent = 'Edit';
       edit.addEventListener('click', () => fillMenuForm(item));
-      const toggle = document.createElement('button');
-      toggle.type = 'button';
-      toggle.textContent = item.available ? 'Hide' : 'Show';
-      toggle.addEventListener('click', () => {
-        const updated = getMenuItems().map((menuItem) => menuItem.id === item.id ? { ...menuItem, available: !menuItem.available } : menuItem);
-        saveMenuItems(updated);
-        renderMenuManager();
-        if (menuStatus) menuStatus.textContent = item.name + ' updated.';
-      });
       const del = document.createElement('button');
       del.type = 'button';
       del.dataset.deleteMenu = 'true';
@@ -351,9 +442,10 @@
         if (!confirm('Delete ' + item.name + '?')) return;
         saveMenuItems(getMenuItems().filter((menuItem) => menuItem.id !== item.id));
         renderMenuManager();
+        renderReportSummary();
         if (menuStatus) menuStatus.textContent = item.name + ' deleted.';
       });
-      actions.append(edit, toggle, del);
+      actions.append(edit, del);
       row.appendChild(actions);
       menuList.appendChild(row);
     });
@@ -361,39 +453,46 @@
 
   function fillMenuForm(item) {
     if (!menuForm) return;
+    renderCategoryOptions(item.category);
     menuForm.elements.id.value = item.id;
     menuForm.elements.name.value = item.name;
     menuForm.elements.price.value = item.price;
     menuForm.elements.category.value = item.category;
     menuForm.elements.label.value = item.label || '';
     menuForm.elements.image.value = item.image || '';
+    menuForm.elements.imageFile.value = '';
     menuForm.elements.description.value = item.description || '';
-    menuForm.elements.available.checked = item.available !== false;
+    updateImagePreview(item.image || '');
     if (menuFormTitle) menuFormTitle.textContent = 'Edit menu item';
     if (menuStatus) menuStatus.textContent = 'Editing ' + item.name;
+    menuForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function clearMenuForm() {
     if (!menuForm) return;
     menuForm.reset();
     menuForm.elements.id.value = '';
-    menuForm.elements.available.checked = true;
+    menuForm.elements.image.value = '';
+    renderCategoryOptions();
+    updateImagePreview('');
     if (menuFormTitle) menuFormTitle.textContent = 'Add menu item';
   }
 
-  function handleMenuSubmit(event) {
+  async function handleMenuSubmit(event) {
     event.preventDefault();
     const data = new FormData(menuForm);
+    const uploadedImage = await readImageFile(menuForm.elements.imageFile.files[0]);
+    const image = uploadedImage || data.get('image') || FALLBACK_IMAGE;
     const id = data.get('id') || slugify(data.get('name')) + '-' + Date.now().toString(36);
     const item = {
       id,
       name: String(data.get('name') || '').trim(),
       price: Number(data.get('price') || 0),
       category: data.get('category'),
-      label: String(data.get('label') || data.get('category') || '').trim(),
-      image: String(data.get('image') || 'assets/photo-iced-coffee.webp').trim(),
+      label: String(data.get('label') || getCategoryName(data.get('category')) || '').trim(),
+      image,
       description: String(data.get('description') || '').trim(),
-      available: data.get('available') === 'on'
+      available: true
     };
 
     const items = getMenuItems();
@@ -402,6 +501,7 @@
     saveMenuItems(updated);
     clearMenuForm();
     renderMenuManager();
+    renderReportSummary();
     if (menuStatus) menuStatus.textContent = exists ? 'Menu item updated.' : 'Menu item added.';
   }
 
@@ -414,7 +514,8 @@
       ['Completed orders', data.completed.length],
       ['Today sales', peso(data.todaySales)],
       ['Total sales', peso(data.totalSales)],
-      ['Menu items', getMenuItems().length]
+      ['Menu items', getMenuItems().length],
+      ['Categories', getCategories().length]
     ];
     rows.forEach(([label, value]) => {
       const row = document.createElement('div');
@@ -457,17 +558,47 @@
   }
 
   function exportOrdersJson() {
-    downloadFile('blk8-orders-backup.json', JSON.stringify({ orders: getOrders(), menu: getMenuItems() }, null, 2), 'application/json');
+    downloadFile('blk8-orders-backup.json', JSON.stringify({ orders: getOrders(), menu: getMenuItems(), categories: getCategories() }, null, 2), 'application/json');
+  }
+
+  function openModal() {
+    if (!categoryModal) return;
+    categoryModal.hidden = false;
+    categoryModal.removeAttribute('hidden');
+    categoryForm?.elements.categoryName?.focus();
+  }
+
+  function closeModal() {
+    if (!categoryModal) return;
+    categoryModal.hidden = true;
+    categoryForm?.reset();
+    if (categoryStatus) categoryStatus.textContent = '';
+  }
+
+  function handleCategorySubmit(event) {
+    event.preventDefault();
+    const name = titleCase(new FormData(categoryForm).get('categoryName'));
+    const id = slugify(name);
+    if (!name || !id) return;
+
+    const categories = getCategories();
+    if (categories.some((category) => category.id === id)) {
+      if (categoryStatus) categoryStatus.textContent = 'Category already exists.';
+      return;
+    }
+
+    categories.push({ id, name });
+    saveCategories(categories);
+    renderCategoryOptions(id);
+    closeModal();
+    if (menuStatus) menuStatus.textContent = name + ' category added.';
   }
 
   function refreshAll() {
+    renderCategoryOptions(menuForm?.elements.category?.value);
     renderStats();
     renderOrders();
     renderMenuManager();
-  }
-
-  function loadNotes() {
-    try { JSON.parse(localStorage.getItem(NOTES_KEY) || '{}'); } catch (error) { localStorage.removeItem(NOTES_KEY); }
   }
 
   loginForm?.addEventListener('submit', (event) => {
@@ -493,9 +624,26 @@
   refreshOrders?.addEventListener('click', refreshAll);
   menuForm?.addEventListener('submit', handleMenuSubmit);
   resetMenuForm?.addEventListener('click', clearMenuForm);
-  resetMenu?.addEventListener('click', () => { if (confirm('Reset menu to defaults?')) { saveMenuItems(DEFAULT_MENU_ITEMS); renderMenuManager(); } });
+  menuForm?.elements.imageFile?.addEventListener('change', async () => {
+    const uploadedImage = await readImageFile(menuForm.elements.imageFile.files[0]);
+    if (uploadedImage) {
+      menuForm.elements.image.value = uploadedImage;
+      updateImagePreview(uploadedImage);
+    }
+  });
+  resetMenu?.addEventListener('click', () => {
+    if (confirm('Reset menu and categories to defaults?')) {
+      saveCategories(DEFAULT_CATEGORIES);
+      saveMenuItems(DEFAULT_MENU_ITEMS);
+      clearMenuForm();
+      refreshAll();
+    }
+  });
   exportCsv?.addEventListener('click', exportOrdersCsv);
   exportJson?.addEventListener('click', exportOrdersJson);
+  openCategoryModal?.addEventListener('click', openModal);
+  closeCategoryButtons.forEach((button) => button.addEventListener('click', closeModal));
+  categoryForm?.addEventListener('submit', handleCategorySubmit);
   markOrdersSeen?.addEventListener('click', () => { const latest = getOrders()[0]?.reference || ''; safeSet(SEEN_ORDER_KEY, latest); refreshAll(); });
   enableNotifications?.addEventListener('click', async () => {
     if (!('Notification' in window)) {
@@ -507,7 +655,7 @@
   });
 
   window.addEventListener('storage', (event) => {
-    if ([ORDERS_KEY, MENU_KEY].includes(event.key)) {
+    if ([ORDERS_KEY, MENU_KEY, CATEGORIES_KEY].includes(event.key)) {
       checkNewOrderNotification();
       refreshAll();
     }
@@ -519,6 +667,9 @@
       refreshAll();
     }
   }, 8000);
+
+  renderCategoryOptions();
+  updateImagePreview('');
 
   if (sessionStorage.getItem(SESSION_KEY) === 'true') {
     try { showDashboard(); } catch (error) { console.error(error); showLogin(); }
