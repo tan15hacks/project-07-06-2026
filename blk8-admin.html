@@ -120,16 +120,17 @@
         </section>
 
         <section class="admin-panel" data-panel="menu">
-          <div class="admin-grid-two">
+          <div class="admin-menu-stack">
             <div class="panel-card">
               <div class="panel-heading compact">
                 <div>
                   <h2 data-menu-form-title>Add menu item</h2>
-                  <p>Create, edit, hide, or delete items shown on the public menu.</p>
+                  <p>Create, edit, or delete items shown on the public menu.</p>
                 </div>
               </div>
               <form class="admin-form" data-menu-form>
                 <input type="hidden" name="id" />
+                <input type="hidden" name="image" />
                 <label>
                   Item name
                   <input type="text" name="name" placeholder="Example: Spanish Latte" required />
@@ -141,11 +142,10 @@
                   </label>
                   <label>
                     Category
-                    <select name="category" required>
-                      <option value="drinks">Drinks</option>
-                      <option value="food">Food</option>
-                      <option value="snacks">Snacks</option>
-                    </select>
+                    <div class="field-with-button">
+                      <select name="category" required data-category-select></select>
+                      <button type="button" data-open-category-modal>Add category</button>
+                    </div>
                   </label>
                 </div>
                 <label>
@@ -153,16 +153,13 @@
                   <input type="text" name="label" placeholder="Drink, Coffee, Meal, Snack" />
                 </label>
                 <label>
-                  Image URL or asset path
-                  <input type="text" name="image" placeholder="assets/photo-iced-coffee.webp" />
+                  Upload image
+                  <input type="file" name="imageFile" accept="image/*" />
                 </label>
+                <div class="image-preview" data-image-preview>No image uploaded yet. A default image will be used.</div>
                 <label>
                   Description
                   <textarea name="description" placeholder="Short menu description" required></textarea>
-                </label>
-                <label class="check-row">
-                  <input type="checkbox" name="available" checked />
-                  Available on public menu
                 </label>
                 <div class="button-row">
                   <button type="submit">Save Item</button>
@@ -176,7 +173,7 @@
               <div class="panel-heading">
                 <div>
                   <h2>Current menu</h2>
-                  <p>Changes appear on menu.html in the same browser.</p>
+                  <p>Changes appear on menu.html in this same browser.</p>
                 </div>
                 <button type="button" data-reset-menu>Reset defaults</button>
               </div>
@@ -222,6 +219,28 @@
         </section>
       </section>
     </section>
+
+    <div class="modal" data-category-modal hidden>
+      <div class="modal__backdrop" data-close-category-modal></div>
+      <section class="modal__card" role="dialog" aria-modal="true" aria-labelledby="category-modal-title">
+        <div class="panel-heading compact">
+          <div>
+            <p class="eyebrow">New menu category</p>
+            <h2 id="category-modal-title">Add category</h2>
+            <p>Create a category that will appear in the admin form and public menu filters.</p>
+          </div>
+          <button type="button" data-close-category-modal>Close</button>
+        </div>
+        <form class="admin-form" data-category-form>
+          <label>
+            Category name
+            <input type="text" name="categoryName" placeholder="Example: Pastries" required />
+          </label>
+          <button type="submit">Save Category</button>
+          <p class="status" data-category-status></p>
+        </form>
+      </section>
+    </div>
   </main>
 
   <script src="admin.js" defer></script>
