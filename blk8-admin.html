@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#15120f" />
+  <title>BLK.8 Admin</title>
+  <link rel="icon" href="assets/logo.svg" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <main class="admin-shell">
+    <section class="admin-login" data-admin-login>
+      <div class="login-card">
+        <p class="eyebrow">Hidden access</p>
+        <h1>BLK.8 Admin</h1>
+        <p>This area is not linked from the public website. Enter the admin passcode to continue.</p>
+        <form data-login-form>
+          <label>
+            Admin passcode
+            <input type="password" name="passcode" placeholder="Enter passcode" autocomplete="current-password" required />
+          </label>
+          <button type="submit">Enter Admin</button>
+          <p class="status" data-login-status aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="admin-dashboard" data-admin-dashboard hidden>
+      <aside class="admin-sidebar">
+        <div>
+          <p class="eyebrow">BLK.8 CAFÉ</p>
+          <h2>Admin Panel</h2>
+        </div>
+        <nav aria-label="Admin navigation">
+          <button type="button" class="is-active" data-admin-tab="orders">Orders</button>
+          <button type="button" data-admin-tab="menu">Menu Notes</button>
+          <button type="button" data-admin-tab="settings">Settings</button>
+        </nav>
+        <button class="logout" type="button" data-logout>Log out</button>
+      </aside>
+
+      <section class="admin-content">
+        <header class="admin-topbar">
+          <div>
+            <p class="eyebrow">Dashboard</p>
+            <h1 data-admin-title>Orders</h1>
+          </div>
+          <a href="index.html#home">Back to website</a>
+        </header>
+
+        <section class="admin-panel is-active" data-panel="orders">
+          <div class="stats-grid">
+            <article><span data-total-orders>0</span><p>Total orders</p></article>
+            <article><span data-pending-orders>0</span><p>Pending</p></article>
+            <article><span data-total-sales>₱0</span><p>Estimated sales</p></article>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-heading">
+              <div>
+                <h2>Placed orders</h2>
+                <p>Orders are stored locally in this browser for now.</p>
+              </div>
+              <button type="button" data-clear-orders>Clear orders</button>
+            </div>
+            <div class="orders-list" data-orders-list></div>
+          </div>
+        </section>
+
+        <section class="admin-panel" data-panel="menu">
+          <div class="panel-card">
+            <div class="panel-heading">
+              <div>
+                <h2>Menu notes</h2>
+                <p>Use this to draft official prices/items before wiring a real database.</p>
+              </div>
+            </div>
+            <form class="admin-form" data-menu-note-form>
+              <label>
+                Public menu note
+                <textarea name="menuNote" placeholder="Example: Prices are subject to availability."></textarea>
+              </label>
+              <label>
+                Internal menu reminder
+                <textarea name="internalNote" placeholder="Example: Confirm official prices with owner."></textarea>
+              </label>
+              <button type="submit">Save Notes</button>
+              <p class="status" data-menu-note-status aria-live="polite"></p>
+            </form>
+          </div>
+        </section>
+
+        <section class="admin-panel" data-panel="settings">
+          <div class="panel-card">
+            <div class="panel-heading">
+              <div>
+                <h2>Admin settings</h2>
+                <p>Change the local passcode for this browser.</p>
+              </div>
+            </div>
+            <form class="admin-form" data-passcode-form>
+              <label>
+                New passcode
+                <input type="password" name="newPasscode" minlength="6" placeholder="Minimum 6 characters" required />
+              </label>
+              <button type="submit">Update Passcode</button>
+              <p class="status" data-passcode-status aria-live="polite"></p>
+            </form>
+            <p class="warning">Static-site note: this is a hidden prototype, not true server security. Real admin security needs backend authentication.</p>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script src="admin.js" defer></script>
+</body>
+</html>
