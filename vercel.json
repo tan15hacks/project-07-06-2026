@@ -1,3 +1,7 @@
 {
-  "outputDirectory": "public"
+  "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/menu", "destination": "/menu.html" },
+    { "source": "/blk8-admin", "destination": "/blk8-admin.html" }
+  ]
 }
