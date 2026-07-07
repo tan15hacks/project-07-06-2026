@@ -3,9 +3,11 @@
 .site-header,
 .site-header.is-scrolled {
   min-height: 82px;
-  background: #15120f !important;
-  border-bottom: 1px solid rgba(255, 250, 243, 0.1) !important;
-  box-shadow: 0 12px 34px rgba(21, 18, 15, 0.18);
+  background: linear-gradient(135deg, rgba(21, 18, 15, 0.68), rgba(21, 18, 15, 0.42)) !important;
+  border-bottom: 1px solid rgba(255, 250, 243, 0.18) !important;
+  box-shadow: 0 16px 44px rgba(21, 18, 15, 0.16);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
 }
 
 .nav {
@@ -15,17 +17,18 @@
 .brand__mark {
   color: #fffaf3 !important;
   width: clamp(118px, 12vw, 156px);
-  filter: none;
+  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.18));
 }
 
 .nav-links a:not(.btn) {
   color: #fffaf3 !important;
-  opacity: 1 !important;
-  text-shadow: none;
+  opacity: 0.94 !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
 }
 
 .nav-links a:not(.btn):hover {
   color: #dbe8c9 !important;
+  opacity: 1 !important;
 }
 
 .nav-toggle span {
@@ -416,7 +419,9 @@
   }
 
   .nav-links {
-    background: #15120f;
+    background: linear-gradient(135deg, rgba(21, 18, 15, 0.84), rgba(21, 18, 15, 0.68));
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
   }
 
   .nav-links a:not(.btn) {
