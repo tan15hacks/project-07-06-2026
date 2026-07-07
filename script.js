@@ -88,3 +88,5 @@ orderForm?.addEventListener("submit", async (event) => {
     formStatus.textContent = "Order message ready. Please copy your details manually and send them through Messenger.";
   }
 });
+
+import("./order-builder.js").catch(() => {});
