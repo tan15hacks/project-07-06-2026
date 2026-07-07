@@ -188,8 +188,8 @@
             <div class="report-hero panel-card">
               <div>
                 <p class="eyebrow">Analytics report</p>
-                <h2>Sales, orders, menu, and category performance</h2>
-                <p>Charts and tables are generated from locally stored orders and admin menu data.</p>
+                <h2>Filtered reports</h2>
+                <p>Choose a date range once. The summary, charts, statistics, tables, Excel export, and PDF export will all use the same filtered data.</p>
                 <p class="report-updated" data-report-updated>Last updated: —</p>
               </div>
               <div class="report-actions">
@@ -198,75 +198,78 @@
               </div>
             </div>
 
+            <form class="report-filter panel-card" data-report-filter-form>
+              <label>
+                Date filter
+                <select data-report-preset>
+                  <option value="today">Today</option>
+                  <option value="week">This week</option>
+                  <option value="month" selected>This month</option>
+                  <option value="year">This year</option>
+                  <option value="all">All time</option>
+                  <option value="custom">Custom range</option>
+                </select>
+              </label>
+              <label>
+                From
+                <input type="date" data-report-start />
+              </label>
+              <label>
+                To
+                <input type="date" data-report-end />
+              </label>
+              <button type="submit">Apply filter</button>
+            </form>
+
             <section>
-              <div class="report-section-heading">
+              <div class="report-section-heading report-section-heading--compact">
                 <div>
                   <p class="eyebrow">Summary</p>
-                  <h2>Report overview</h2>
+                  <h2 data-report-range-title>Report overview</h2>
                 </div>
               </div>
               <div class="report-kpi-grid" data-report-kpis></div>
             </section>
 
             <section>
-              <div class="report-section-heading">
+              <div class="report-section-heading report-section-heading--compact">
                 <div>
                   <p class="eyebrow">Charts analysis</p>
-                  <h2>Orders and sales trends</h2>
+                  <h2>Filtered trends</h2>
                 </div>
               </div>
               <div class="report-chart-grid" data-report-charts></div>
             </section>
 
-            <section class="report-table-grid">
+            <section class="report-table-grid report-table-grid--filtered">
               <article class="panel-card">
                 <div class="panel-heading compact">
                   <div>
-                    <h2>Yearly orders and sales</h2>
-                    <p>Includes 2024, 2025, and every available year onward.</p>
+                    <h2 data-period-table-title>Period performance</h2>
+                    <p>Orders and sales grouped automatically based on the selected date filter.</p>
                   </div>
                 </div>
-                <div class="report-table-wrap" data-report-yearly-table></div>
+                <div class="report-table-wrap" data-report-period-table></div>
               </article>
 
               <article class="panel-card">
                 <div class="panel-heading compact">
                   <div>
-                    <h2>Monthly performance</h2>
-                    <p>Current year breakdown by month.</p>
-                  </div>
-                </div>
-                <div class="report-table-wrap" data-report-monthly-table></div>
-              </article>
-
-              <article class="panel-card">
-                <div class="panel-heading compact">
-                  <div>
-                    <h2>Weekly and daily performance</h2>
-                    <p>Recent operating trend for short-term tracking.</p>
-                  </div>
-                </div>
-                <div class="report-table-wrap" data-report-weekly-table></div>
-              </article>
-
-              <article class="panel-card">
-                <div class="panel-heading compact">
-                  <div>
-                    <h2>Menu item performance</h2>
-                    <p>Sold quantity, revenue, category, and item pricing.</p>
+                    <h2>Menu performance</h2>
+                    <p>Menu items and categories using the selected date filter.</p>
                   </div>
                 </div>
                 <div class="report-table-wrap" data-report-menu-table></div>
+                <div class="report-table-wrap" data-report-category-table></div>
               </article>
 
               <article class="panel-card">
                 <div class="panel-heading compact">
                   <div>
-                    <h2>Categories and order mix</h2>
-                    <p>Menu categories, order statuses, payment methods, and order types.</p>
+                    <h2>Order mix</h2>
+                    <p>Status, payment method, and order type for the selected date filter.</p>
                   </div>
                 </div>
-                <div class="report-table-wrap" data-report-category-table></div>
                 <div class="report-table-wrap" data-report-status-table></div>
               </article>
 
@@ -274,7 +277,7 @@
                 <div class="panel-heading compact">
                   <div>
                     <h2>Order details</h2>
-                    <p>Full order records included in Excel and PDF exports.</p>
+                    <p>Only orders inside the selected date filter are shown.</p>
                   </div>
                 </div>
                 <div class="report-table-wrap" data-report-order-table></div>
