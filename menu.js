@@ -1,6 +1,15 @@
 (() => {
   const MENU_KEY = 'blk8-menu-items';
+  const CATEGORIES_KEY = 'blk8-menu-categories';
   const ORDERS_KEY = 'blk8-placed-orders';
+  const FALLBACK_IMAGE = 'assets/photo-iced-coffee.webp';
+
+  const DEFAULT_CATEGORIES = [
+    { id: 'drinks', name: 'Drinks' },
+    { id: 'food', name: 'Food' },
+    { id: 'snacks', name: 'Snacks' }
+  ];
+
   const DEFAULT_MENU_ITEMS = [
     { id: 'matcha-latte', name: 'Matcha Latte', price: 120, category: 'drinks', label: 'Drink', image: 'assets/photo-matcha-latte.webp', description: 'Creamy matcha with a smooth café finish.', available: true },
     { id: 'hot-coffee-latte', name: 'Hot Coffee Latte', price: 95, category: 'drinks', label: 'Coffee', image: 'assets/photo-hot-latte.webp', description: 'Warm coffee, soft foam, and cozy table energy.', available: true },
@@ -12,7 +21,7 @@
 
   const cart = new Map();
   const menuGrid = document.querySelector('.order-menu-grid');
-  const menuFilterButtons = document.querySelectorAll('[data-menu-filter]');
+  const filterContainer = document.querySelector('.menu-filters');
   const cartList = document.querySelector('[data-cart-list]');
   const cartTotal = document.querySelector('[data-cart-total]');
   const cartMiniTotal = document.querySelector('[data-cart-mini-total]');
@@ -31,15 +40,46 @@
     return '₱' + Number(amount || 0).toLocaleString('en-PH');
   }
 
+  function titleCase(text) {
+    return String(text || '').trim().replace(/\s+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+
   function getMenuItems() {
     try {
       const saved = JSON.parse(localStorage.getItem(MENU_KEY) || 'null');
-      if (Array.isArray(saved) && saved.length) return saved;
+      if (Array.isArray(saved) && saved.length) {
+        return saved.map((item) => ({ ...item, image: item.image || FALLBACK_IMAGE, available: true }));
+      }
     } catch (error) {
       localStorage.removeItem(MENU_KEY);
     }
     localStorage.setItem(MENU_KEY, JSON.stringify(DEFAULT_MENU_ITEMS));
     return [...DEFAULT_MENU_ITEMS];
+  }
+
+  function getCategories() {
+    let categories = [];
+    try {
+      const saved = JSON.parse(localStorage.getItem(CATEGORIES_KEY) || 'null');
+      if (Array.isArray(saved) && saved.length) categories = saved;
+    } catch (error) {
+      localStorage.removeItem(CATEGORIES_KEY);
+    }
+    if (!categories.length) categories = [...DEFAULT_CATEGORIES];
+
+    getMenuItems().forEach((item) => {
+      if (item.category && !categories.some((category) => category.id === item.category)) {
+        categories.push({ id: item.category, name: titleCase(item.category.replace(/-/g, ' ')) });
+      }
+    });
+
+    localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+    return categories;
+  }
+
+  function getCategoryName(categoryId) {
+    const category = getCategories().find((item) => item.id === categoryId);
+    return category?.name || titleCase(String(categoryId || '').replace(/-/g, ' '));
   }
 
   function getTotal() {
@@ -65,6 +105,30 @@
     if (type) statusText.classList.add(type);
   }
 
+  function renderFilters() {
+    if (!filterContainer) return;
+    const categories = getCategories();
+    const activeExists = activeFilter === 'all' || categories.some((category) => category.id === activeFilter);
+    if (!activeExists) activeFilter = 'all';
+
+    filterContainer.replaceChildren();
+    const allButton = document.createElement('button');
+    allButton.className = 'chip' + (activeFilter === 'all' ? ' is-active' : '');
+    allButton.type = 'button';
+    allButton.dataset.menuFilter = 'all';
+    allButton.textContent = 'All';
+    filterContainer.appendChild(allButton);
+
+    categories.forEach((category) => {
+      const button = document.createElement('button');
+      button.className = 'chip' + (activeFilter === category.id ? ' is-active' : '');
+      button.type = 'button';
+      button.dataset.menuFilter = category.id;
+      button.textContent = category.name;
+      filterContainer.appendChild(button);
+    });
+  }
+
   function createMenuCard(item) {
     const article = document.createElement('article');
     article.className = 'order-item';
@@ -72,17 +136,17 @@
     article.dataset.menuItem = item.id;
 
     const img = document.createElement('img');
-    img.src = item.image || 'assets/photo-iced-coffee.webp';
+    img.src = item.image || FALLBACK_IMAGE;
     img.alt = item.name;
     img.loading = 'lazy';
     img.onerror = function () {
-      img.src = 'assets/photo-iced-coffee.webp';
+      img.src = FALLBACK_IMAGE;
     };
 
     const body = document.createElement('div');
     const pill = document.createElement('span');
     pill.className = 'pill';
-    pill.textContent = item.label || item.category;
+    pill.textContent = item.label || getCategoryName(item.category);
     const title = document.createElement('h3');
     title.textContent = item.name;
     const desc = document.createElement('p');
@@ -108,7 +172,8 @@
 
   function renderMenu() {
     if (!menuGrid) return;
-    const items = getMenuItems().filter((item) => item.available !== false);
+    renderFilters();
+    const items = getMenuItems();
     const visibleItems = items.filter((item) => activeFilter === 'all' || item.category === activeFilter);
     menuGrid.replaceChildren();
 
@@ -258,14 +323,11 @@
     setStatus('Order cleared.');
   });
 
-  menuFilterButtons.forEach(function (button) {
-    button.addEventListener('click', function () {
-      activeFilter = button.dataset.menuFilter;
-      menuFilterButtons.forEach(function (btn) {
-        btn.classList.toggle('is-active', btn === button);
-      });
-      renderMenu();
-    });
+  filterContainer?.addEventListener('click', function (event) {
+    const button = event.target.closest('[data-menu-filter]');
+    if (!button) return;
+    activeFilter = button.dataset.menuFilter;
+    renderMenu();
   });
 
   menuOrderForm?.addEventListener('submit', function (event) {
@@ -316,7 +378,7 @@
   });
 
   window.addEventListener('storage', function (event) {
-    if (event.key === MENU_KEY) {
+    if ([MENU_KEY, CATEGORIES_KEY].includes(event.key)) {
       renderMenu();
     }
   });
