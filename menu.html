@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BLK.8 CAFÉ menu and order builder for coffee, matcha, snacks, and meals." />
+  <meta name="theme-color" content="#111111" />
+  <title>Menu & Orders | BLK.8 CAFÉ</title>
+  <link rel="icon" href="assets/logo.svg" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="polish.css" />
+  <link rel="stylesheet" href="menu.css" />
+</head>
+<body>
+  <a class="skip-link" href="#menu-main">Skip to menu</a>
+
+  <header class="site-header is-scrolled" data-header>
+    <nav class="nav container" aria-label="Main navigation">
+      <a class="brand" href="index.html#home" aria-label="BLK.8 CAFÉ home">
+        <svg class="brand__mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" role="img" aria-labelledby="title desc">
+          <title id="title">BLK.8 CAFÉ Logo</title>
+          <desc id="desc">Logo featuring a house-shaped coffee cup and the text BLK.8 CAFÉ SPECIALTY COFFEE</desc>
+          <g fill="currentColor">
+            <path d="M40 100 L40 140 Q40 150 50 150 L100 150 Q110 150 110 140 L110 100 Z" />
+            <path d="M25 100 L75 60 L125 100 Z" />
+            <rect x="105" y="75" width="10" height="20" />
+            <path d="M110 105 Q135 105 135 125 Q135 145 110 145" fill="none" stroke="currentColor" stroke-width="12" />
+            <rect x="65" y="110" width="8" height="8" fill="#ffffff" />
+            <rect x="77" y="110" width="8" height="8" fill="#ffffff" />
+            <rect x="65" y="122" width="8" height="8" fill="#ffffff" />
+            <rect x="77" y="122" width="8" height="8" fill="#ffffff" />
+          </g>
+          <g fill="currentColor" font-family="Arial, sans-serif" font-weight="bold">
+            <text x="150" y="115" font-size="52" letter-spacing="-1">BLK.8</text>
+            <text x="150" y="155" font-size="42" letter-spacing="2">CAFÉ</text>
+            <text x="150" y="180" font-size="12" letter-spacing="4" font-weight="normal">SPECIALTY COFFEE</text>
+          </g>
+        </svg>
+        <span class="brand__text">BLK.8 CAFÉ</span>
+      </a>
+
+      <button class="nav-toggle" data-nav-toggle aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="nav-links" data-nav-links>
+        <a href="index.html#home">Home</a>
+        <a href="menu.html" aria-current="page">Menu</a>
+        <a href="index.html#experience">Dine In</a>
+        <a href="index.html#reviews">Reviews</a>
+        <a href="index.html#location">Location</a>
+        <a href="#order-panel" class="btn btn--small">View Order</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="menu-main">
+    <section class="menu-page-hero">
+      <div class="container menu-page-hero__grid">
+        <div>
+          <p class="eyebrow">BLK.8 CAFÉ menu</p>
+          <h1>Build your order before messaging the café.</h1>
+          <p>
+            Add drinks, snacks, and meals to your order list. Adjust quantities, add pickup notes,
+            then copy a clean Messenger-ready order message.
+          </p>
+          <div class="hero__actions">
+            <a class="btn" href="#menu-list">Start Ordering</a>
+            <a class="btn btn--ghost-dark" href="index.html#home">Back Home</a>
+          </div>
+        </div>
+        <div class="menu-page-hero__card">
+          <span>Today’s quick pick</span>
+          <strong>Iced Coffee + Pasta</strong>
+          <p>Good for an afternoon coffee break or quick takeout run.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section menu-shop" id="menu-list">
+      <div class="container menu-shop__layout">
+        <div class="menu-shop__left">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Choose items</p>
+              <h2>Menu items</h2>
+            </div>
+            <p>Sample prices are editable. Replace these with official BLK.8 CAFÉ prices before final launch.</p>
+          </div>
+
+          <div class="menu-filters" role="tablist" aria-label="Menu categories">
+            <button class="chip is-active" data-menu-filter="all" type="button">All</button>
+            <button class="chip" data-menu-filter="drinks" type="button">Drinks</button>
+            <button class="chip" data-menu-filter="food" type="button">Food</button>
+            <button class="chip" data-menu-filter="snacks" type="button">Snacks</button>
+          </div>
+
+          <div class="order-menu-grid">
+            <article class="order-item" data-menu-category="drinks">
+              <img src="assets/photo-matcha-latte.webp" alt="Matcha latte" loading="lazy" />
+              <div>
+                <span class="pill">Drink</span>
+                <h3>Matcha Latte</h3>
+                <p>Creamy matcha with a smooth café finish.</p>
+                <div class="order-item__bottom">
+                  <strong>₱120</strong>
+                  <button type="button" data-add-order data-name="Matcha Latte" data-price="120">Add</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="order-item" data-menu-category="drinks">
+              <img src="assets/photo-hot-latte.webp" alt="Hot coffee latte" loading="lazy" />
+              <div>
+                <span class="pill">Coffee</span>
+                <h3>Hot Coffee Latte</h3>
+                <p>Warm coffee, soft foam, and cozy table energy.</p>
+                <div class="order-item__bottom">
+                  <strong>₱95</strong>
+                  <button type="button" data-add-order data-name="Hot Coffee Latte" data-price="95">Add</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="order-item" data-menu-category="drinks">
+              <img src="assets/photo-iced-coffee.webp" alt="Iced coffee" loading="lazy" />
+              <div>
+                <span class="pill">Iced</span>
+                <h3>Iced Coffee</h3>
+                <p>Cold, creamy, and made for warm Albay afternoons.</p>
+                <div class="order-item__bottom">
+                  <strong>₱110</strong>
+                  <button type="button" data-add-order data-name="Iced Coffee" data-price="110">Add</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="order-item" data-menu-category="food">
+              <img src="assets/photo-burger-fries.webp" alt="Burger and fries" loading="lazy" />
+              <div>
+                <span class="pill">Food</span>
+                <h3>Burger & Fries</h3>
+                <p>A filling café meal for barkada visits.</p>
+                <div class="order-item__bottom">
+                  <strong>₱159</strong>
+                  <button type="button" data-add-order data-name="Burger & Fries" data-price="159">Add</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="order-item" data-menu-category="food">
+              <img src="assets/photo-rice-meal.webp" alt="Rice meal" loading="lazy" />
+              <div>
+                <span class="pill">Meal</span>
+                <h3>Rice Meal</h3>
+                <p>Comfort food for lunch, dinner, and cravings.</p>
+                <div class="order-item__bottom">
+                  <strong>₱149</strong>
+                  <button type="button" data-add-order data-name="Rice Meal" data-price="149">Add</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="order-item" data-menu-category="snacks">
+              <img src="assets/photo-pasta.webp" alt="Pasta and snacks" loading="lazy" />
+              <div>
+                <span class="pill">Snack</span>
+                <h3>Pasta & Snacks</h3>
+                <p>Pair with coffee when one drink is not enough.</p>
+                <div class="order-item__bottom">
+                  <strong>₱139</strong>
+                  <button type="button" data-add-order data-name="Pasta & Snacks" data-price="139">Add</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <aside class="order-panel" id="order-panel" aria-label="Current order">
+          <div class="order-panel__header">
+            <div>
+              <p class="eyebrow">Your order</p>
+              <h2>Order list</h2>
+            </div>
+            <button type="button" data-clear-cart>Clear</button>
+          </div>
+
+          <ul class="cart-list" data-cart-list>
+            <li class="cart-empty">No items yet.</li>
+          </ul>
+
+          <div class="cart-total">
+            <span>Estimated total</span>
+            <strong data-cart-total>₱0</strong>
+          </div>
+
+          <form class="menu-order-form" data-menu-order-form>
+            <label>
+              Name
+              <input type="text" name="customer" placeholder="Juan Dela Cruz" required />
+            </label>
+            <label>
+              Contact / Messenger name
+              <input type="text" name="contact" placeholder="09xx xxx xxxx" required />
+            </label>
+            <div class="form-row">
+              <label>
+                Order type
+                <select name="type">
+                  <option>Pickup / Takeout</option>
+                  <option>Dine-in inquiry</option>
+                </select>
+              </label>
+              <label>
+                Preferred time
+                <input type="text" name="time" placeholder="Today, 5:30 PM" />
+              </label>
+            </div>
+            <label>
+              Notes
+              <textarea name="notes" placeholder="Less sweet, extra ice, no onions, etc."></textarea>
+            </label>
+            <button class="btn" type="submit">Copy Order Message</button>
+            <p class="form-help" data-cart-status aria-live="polite"></p>
+          </form>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer__inner">
+      <a class="brand" href="index.html#home"><span class="brand__text">BLK.8 CAFÉ</span></a>
+      <p>© <span data-year></span> BLK.8 CAFÉ. Coffee, matcha, comfort food, and cozy tables in Guinobatan.</p>
+    </div>
+  </footer>
+
+  <script src="script.js" defer></script>
+  <script src="menu.js" defer></script>
+</body>
+</html>
