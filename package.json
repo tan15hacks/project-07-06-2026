@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "node -e \"const fs=require('fs'); const path=require('path'); const out='public'; fs.rmSync(out,{recursive:true,force:true}); fs.mkdirSync(out,{recursive:true}); for (const item of ['index.html','styles.css','polish.css','script.js','assets']) { if (fs.existsSync(item)) fs.cpSync(item,path.join(out,item),{recursive:true}); }\"",
+    "build": "node -e \"const fs=require('fs'); const path=require('path'); const out='public'; fs.rmSync(out,{recursive:true,force:true}); fs.mkdirSync(out,{recursive:true}); for (const item of ['index.html','menu.html','styles.css','polish.css','menu.css','script.js','menu.js','assets']) { if (fs.existsSync(item)) fs.cpSync(item,path.join(out,item),{recursive:true}); }\"",
     "start": "python -m http.server 5173",
     "serve": "python -m http.server 5173"
   },
