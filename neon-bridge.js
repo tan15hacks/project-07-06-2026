@@ -70,6 +70,25 @@
     dispatchStorage(key);
   }
 
+  function mergeOrders(localOrders, serverOrders) {
+    const map = new Map();
+
+    [...localOrders, ...serverOrders].forEach((order) => {
+      if (!order?.reference) return;
+      const existing = map.get(order.reference);
+      if (!existing) {
+        map.set(order.reference, order);
+        return;
+      }
+
+      const existingTime = new Date(existing.createdAt || 0).getTime() || 0;
+      const orderTime = new Date(order.createdAt || 0).getTime() || 0;
+      map.set(order.reference, orderTime >= existingTime ? { ...existing, ...order } : { ...order, ...existing });
+    });
+
+    return Array.from(map.values()).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  }
+
   async function checkApi() {
     for (const candidate of localApiCandidates()) {
       try {
@@ -92,7 +111,7 @@
   async function pullCategories() {
     if (!apiIsAvailable) return;
     const data = await request('/api/categories');
-    if (Array.isArray(data.categories)) setLocalFromServer(KEYS.categories, data.categories);
+    if (Array.isArray(data.categories) && data.categories.length) setLocalFromServer(KEYS.categories, data.categories);
   }
 
   async function pullMenu() {
@@ -104,7 +123,15 @@
   async function pullOrders() {
     if (!apiIsAvailable) return;
     const data = await request('/api/orders');
-    if (Array.isArray(data.orders)) setLocalFromServer(KEYS.orders, data.orders);
+    if (!Array.isArray(data.orders)) return;
+
+    const localOrders = safeParse(localStorage.getItem(KEYS.orders), []);
+    const merged = mergeOrders(Array.isArray(localOrders) ? localOrders : [], data.orders);
+    setLocalFromServer(KEYS.orders, merged);
+
+    if (merged.length) {
+      await request('/api/orders', { method: 'PUT', body: JSON.stringify({ orders: merged }) });
+    }
   }
 
   async function pullAll() {
@@ -126,17 +153,23 @@
     try {
       if (key === KEYS.categories) {
         const categories = safeParse(localStorage.getItem(KEYS.categories), []);
-        await request('/api/categories', { method: 'PUT', body: JSON.stringify({ categories }) });
+        if (Array.isArray(categories) && categories.length) {
+          await request('/api/categories', { method: 'PUT', body: JSON.stringify({ categories }) });
+        }
       }
 
       if (key === KEYS.menu) {
         const items = safeParse(localStorage.getItem(KEYS.menu), []);
-        await request('/api/menu-items', { method: 'PUT', body: JSON.stringify({ items }) });
+        if (Array.isArray(items) && items.length) {
+          await request('/api/menu-items', { method: 'PUT', body: JSON.stringify({ items }) });
+        }
       }
 
       if (key === KEYS.orders) {
         const orders = safeParse(localStorage.getItem(KEYS.orders), []);
-        await request('/api/orders', { method: 'PUT', body: JSON.stringify({ orders }) });
+        if (Array.isArray(orders) && orders.length) {
+          await request('/api/orders', { method: 'PUT', body: JSON.stringify({ orders }) });
+        }
       }
     } catch (error) {
       console.warn('[BLK.8 Neon] Sync failed:', key, error.message);
