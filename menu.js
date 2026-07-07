@@ -15,6 +15,7 @@
   const confirmation = document.querySelector('[data-order-confirmation]');
   const orderReference = document.querySelector('[data-order-reference]');
   const newOrderButton = document.querySelector('[data-new-order]');
+  const ORDERS_KEY = 'blk8-placed-orders';
 
   function formatPeso(amount) {
     return '₱' + amount.toLocaleString('en-PH');
@@ -153,6 +154,17 @@
     return 'BLK8-' + randomPart;
   }
 
+  function savePlacedOrder(order) {
+    let orders = [];
+    try {
+      orders = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]');
+    } catch (error) {
+      orders = [];
+    }
+    orders.unshift(order);
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders.slice(0, 50)));
+  }
+
   menuAddButtons.forEach(function (button) {
     button.addEventListener('click', function () {
       const name = button.dataset.name;
@@ -197,8 +209,24 @@
       return;
     }
 
+    const data = new FormData(menuOrderForm);
     const reference = makeReference();
     const total = getTotal();
+
+    savePlacedOrder({
+      reference,
+      createdAt: new Date().toISOString(),
+      status: 'pending',
+      items: Array.from(cart.values()),
+      total,
+      customer: data.get('customer'),
+      contact: data.get('contact'),
+      type: data.get('type'),
+      time: data.get('time') || 'Not specified',
+      payment: data.get('payment'),
+      notes: data.get('notes') || 'None'
+    });
+
     setStatus('Order placed. Reference: ' + reference, 'is-success');
 
     if (orderReference) {
