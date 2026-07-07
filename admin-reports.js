@@ -3,7 +3,6 @@
   const MENU_KEY = 'blk8-menu-items';
   const CATEGORIES_KEY = 'blk8-menu-categories';
   const PESO = '₱';
-  const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const DEFAULT_CATEGORIES = [
     { id: 'drinks', name: 'Drinks' },
@@ -13,11 +12,15 @@
 
   const els = {
     updated: document.querySelector('[data-report-updated]'),
+    rangeTitle: document.querySelector('[data-report-range-title]'),
+    periodTitle: document.querySelector('[data-period-table-title]'),
+    filterForm: document.querySelector('[data-report-filter-form]'),
+    preset: document.querySelector('[data-report-preset]'),
+    start: document.querySelector('[data-report-start]'),
+    end: document.querySelector('[data-report-end]'),
     kpis: document.querySelector('[data-report-kpis]'),
     charts: document.querySelector('[data-report-charts]'),
-    yearly: document.querySelector('[data-report-yearly-table]'),
-    monthly: document.querySelector('[data-report-monthly-table]'),
-    weekly: document.querySelector('[data-report-weekly-table]'),
+    period: document.querySelector('[data-report-period-table]'),
     menu: document.querySelector('[data-report-menu-table]'),
     category: document.querySelector('[data-report-category-table]'),
     status: document.querySelector('[data-report-status-table]'),
@@ -28,7 +31,7 @@
   };
 
   function peso(amount) {
-    return PESO + Number(amount || 0).toLocaleString('en-PH');
+    return PESO + Number(amount || 0).toLocaleString('en-PH', { maximumFractionDigits: 0 });
   }
 
   function number(value) {
@@ -45,25 +48,35 @@
   }
 
   function getOrders() {
-    return Array.isArray(readJSON(ORDERS_KEY, [])) ? readJSON(ORDERS_KEY, []) : [];
+    const rows = readJSON(ORDERS_KEY, []);
+    return Array.isArray(rows) ? rows : [];
   }
 
   function getMenuItems() {
-    return Array.isArray(readJSON(MENU_KEY, [])) ? readJSON(MENU_KEY, []) : [];
+    const rows = readJSON(MENU_KEY, []);
+    return Array.isArray(rows) ? rows : [];
   }
 
   function getCategories() {
-    const saved = readJSON(CATEGORIES_KEY, DEFAULT_CATEGORIES);
-    return Array.isArray(saved) && saved.length ? saved : DEFAULT_CATEGORIES;
-  }
-
-  function validSalesOrders(orders) {
-    return orders.filter((order) => ['pending', 'ready', 'complete'].includes(order.status || 'pending'));
+    const rows = readJSON(CATEGORIES_KEY, DEFAULT_CATEGORIES);
+    return Array.isArray(rows) && rows.length ? rows : DEFAULT_CATEGORIES;
   }
 
   function startOfDay(date) {
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  function endOfDay(date) {
+    const d = new Date(date);
+    d.setHours(23, 59, 59, 999);
+    return d;
+  }
+
+  function addDays(date, days) {
+    const d = new Date(date);
+    d.setDate(d.getDate() + days);
     return d;
   }
 
@@ -74,10 +87,20 @@
     return d;
   }
 
-  function addDays(date, days) {
-    const d = new Date(date);
-    d.setDate(d.getDate() + days);
-    return d;
+  function startOfMonth(date) {
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+  }
+
+  function endOfMonth(date) {
+    return endOfDay(new Date(date.getFullYear(), date.getMonth() + 1, 0));
+  }
+
+  function startOfYear(date) {
+    return new Date(date.getFullYear(), 0, 1);
+  }
+
+  function endOfYear(date) {
+    return endOfDay(new Date(date.getFullYear(), 11, 31));
   }
 
   function dateKey(date) {
@@ -89,10 +112,6 @@
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
   }
 
-  function weekKey(date) {
-    return dateKey(startOfWeek(date));
-  }
-
   function yearKey(date) {
     return String(new Date(date).getFullYear());
   }
@@ -102,20 +121,8 @@
     return Number.isNaN(date.getTime()) ? new Date() : date;
   }
 
-  function isSameDay(a, b) {
-    return dateKey(a) === dateKey(b);
-  }
-
-  function isSameWeek(a, b) {
-    return weekKey(a) === weekKey(b);
-  }
-
-  function isSameMonth(a, b) {
-    return monthKey(a) === monthKey(b);
-  }
-
-  function isSameYear(a, b) {
-    return yearKey(a) === yearKey(b);
+  function dateInputValue(date) {
+    return dateKey(date);
   }
 
   function dateLabel(date) {
@@ -123,67 +130,153 @@
     return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
   }
 
-  function weekLabel(weekStart) {
-    const start = new Date(weekStart);
-    const end = addDays(start, 6);
-    return `${MONTHS[start.getMonth()]} ${start.getDate()}–${MONTHS[end.getMonth()]} ${end.getDate()}`;
+  function monthLabel(key) {
+    const [year, month] = String(key).split('-').map(Number);
+    return `${MONTHS[(month || 1) - 1]} ${year}`;
+  }
+
+  function categoryName(id) {
+    const found = getCategories().find((category) => category.id === id);
+    return found?.name || String(id || 'Uncategorized').replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+
+  function isValidSales(order) {
+    return (order.status || 'pending') !== 'cancelled';
   }
 
   function sumSales(orders) {
-    return validSalesOrders(orders).reduce((sum, order) => sum + Number(order.total || 0), 0);
+    return orders.filter(isValidSales).reduce((sum, order) => sum + Number(order.total || 0), 0);
   }
 
-  function countBy(rows, getKey, defaultRows = []) {
-    const map = new Map(defaultRows.map((row) => [row.key, { ...row, orders: 0, sales: 0 }]));
-    rows.forEach((order) => {
-      const key = getKey(order);
-      const current = map.get(key) || { key, label: key, orders: 0, sales: 0 };
-      current.orders += 1;
-      if ((order.status || 'pending') !== 'cancelled') current.sales += Number(order.total || 0);
-      map.set(key, current);
+  function getFilter() {
+    const preset = els.preset?.value || 'month';
+    const now = new Date();
+    let start = null;
+    let end = null;
+    let label = 'All time';
+
+    if (preset === 'today') {
+      start = startOfDay(now);
+      end = endOfDay(now);
+      label = 'Today';
+    } else if (preset === 'week') {
+      start = startOfWeek(now);
+      end = endOfDay(addDays(start, 6));
+      label = 'This week';
+    } else if (preset === 'month') {
+      start = startOfMonth(now);
+      end = endOfMonth(now);
+      label = 'This month';
+    } else if (preset === 'year') {
+      start = startOfYear(now);
+      end = endOfYear(now);
+      label = 'This year';
+    } else if (preset === 'custom') {
+      start = els.start?.value ? startOfDay(new Date(els.start.value)) : null;
+      end = els.end?.value ? endOfDay(new Date(els.end.value)) : null;
+      label = start && end ? `${dateLabel(start)} to ${dateLabel(end)}` : 'Custom range';
+    }
+
+    if (preset !== 'custom') {
+      if (els.start) els.start.value = start ? dateInputValue(start) : '';
+      if (els.end) els.end.value = end ? dateInputValue(end) : '';
+    }
+
+    return { preset, start, end, label };
+  }
+
+  function filterOrders(orders, filter) {
+    if (!filter.start && !filter.end) return orders;
+    return orders.filter((order) => {
+      const date = orderDate(order);
+      if (filter.start && date < filter.start) return false;
+      if (filter.end && date > filter.end) return false;
+      return true;
+    });
+  }
+
+  function daysBetween(start, end) {
+    if (!start || !end) return Infinity;
+    return Math.max(1, Math.ceil((end - start) / 86400000) + 1);
+  }
+
+  function getBuckets(filter) {
+    const now = new Date();
+    const preset = filter.preset;
+
+    if (preset === 'today') {
+      return Array.from({ length: 24 }, (_, hour) => ({
+        key: String(hour).padStart(2, '0'),
+        label: hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`,
+        orders: 0,
+        sales: 0
+      }));
+    }
+
+    if (preset === 'week') {
+      const start = filter.start || startOfWeek(now);
+      return Array.from({ length: 7 }, (_, index) => {
+        const date = addDays(start, index);
+        return { key: dateKey(date), label: `${MONTHS[date.getMonth()]} ${date.getDate()}`, orders: 0, sales: 0 };
+      });
+    }
+
+    const span = daysBetween(filter.start, filter.end);
+    if (preset === 'month' || span <= 45) {
+      const start = filter.start || startOfMonth(now);
+      const count = Math.min(45, daysBetween(start, filter.end || endOfMonth(now)));
+      return Array.from({ length: count }, (_, index) => {
+        const date = addDays(start, index);
+        return { key: dateKey(date), label: `${MONTHS[date.getMonth()]} ${date.getDate()}`, orders: 0, sales: 0 };
+      });
+    }
+
+    if (preset === 'year' || span <= 730) {
+      const year = (filter.start || now).getFullYear();
+      const startMonth = preset === 'custom' && filter.start ? filter.start.getMonth() : 0;
+      const endMonth = preset === 'custom' && filter.end ? filter.end.getMonth() : 11;
+      const startYear = filter.start ? filter.start.getFullYear() : year;
+      const endYear = filter.end ? filter.end.getFullYear() : year;
+      const buckets = [];
+      for (let y = startYear; y <= endYear; y += 1) {
+        const from = y === startYear ? startMonth : 0;
+        const to = y === endYear ? endMonth : 11;
+        for (let month = from; month <= to; month += 1) {
+          const key = `${y}-${String(month + 1).padStart(2, '0')}`;
+          buckets.push({ key, label: `${MONTHS[month]} ${y}`, orders: 0, sales: 0 });
+        }
+      }
+      return buckets;
+    }
+
+    const years = new Set([2024, 2025, now.getFullYear()]);
+    getOrders().forEach((order) => years.add(orderDate(order).getFullYear()));
+    return Array.from(years).sort((a, b) => a - b).map((year) => ({ key: String(year), label: String(year), orders: 0, sales: 0 }));
+  }
+
+  function bucketKeyForDate(date, filter) {
+    if (filter.preset === 'today') return String(date.getHours()).padStart(2, '0');
+    if (filter.preset === 'week') return dateKey(date);
+    const span = daysBetween(filter.start, filter.end);
+    if (filter.preset === 'month' || span <= 45) return dateKey(date);
+    if (filter.preset === 'year' || span <= 730) return monthKey(date);
+    return yearKey(date);
+  }
+
+  function buildTrendRows(filteredOrders, filter) {
+    const buckets = getBuckets(filter);
+    const map = new Map(buckets.map((bucket) => [bucket.key, { ...bucket }]));
+    filteredOrders.forEach((order) => {
+      const key = bucketKeyForDate(orderDate(order), filter);
+      const row = map.get(key);
+      if (!row) return;
+      row.orders += 1;
+      if (isValidSales(order)) row.sales += Number(order.total || 0);
     });
     return Array.from(map.values());
   }
 
-  function getRangeRows(orders, unit) {
-    const now = new Date();
-    if (unit === 'daily') {
-      const defaults = Array.from({ length: 14 }, (_, i) => {
-        const d = addDays(now, i - 13);
-        return { key: dateKey(d), label: `${MONTHS[d.getMonth()]} ${d.getDate()}`, orders: 0, sales: 0 };
-      });
-      return countBy(orders, (order) => dateKey(orderDate(order)), defaults).filter((row) => defaults.some((d) => d.key === row.key));
-    }
-
-    if (unit === 'weekly') {
-      const currentWeek = startOfWeek(now);
-      const defaults = Array.from({ length: 8 }, (_, i) => {
-        const d = addDays(currentWeek, (i - 7) * 7);
-        return { key: dateKey(d), label: weekLabel(d), orders: 0, sales: 0 };
-      });
-      return countBy(orders, (order) => weekKey(orderDate(order)), defaults).filter((row) => defaults.some((d) => d.key === row.key));
-    }
-
-    const year = now.getFullYear();
-    const defaults = MONTHS.map((month, index) => ({
-      key: `${year}-${String(index + 1).padStart(2, '0')}`,
-      label: month,
-      orders: 0,
-      sales: 0
-    }));
-    return countBy(orders, (order) => monthKey(orderDate(order)), defaults).filter((row) => defaults.some((d) => d.key === row.key));
-  }
-
-  function getYearRows(orders) {
-    const nowYear = new Date().getFullYear();
-    const years = new Set([2024, 2025, nowYear]);
-    orders.forEach((order) => years.add(orderDate(order).getFullYear()));
-    const sorted = Array.from(years).filter(Boolean).sort((a, b) => a - b);
-    const defaults = sorted.map((year) => ({ key: String(year), label: String(year), orders: 0, sales: 0 }));
-    return countBy(orders, (order) => yearKey(orderDate(order)), defaults).sort((a, b) => String(a.key).localeCompare(String(b.key)));
-  }
-
-  function getItemRows(orders, menuItems) {
+  function getItemRows(filteredOrders, menuItems) {
     const itemMap = new Map();
     menuItems.forEach((item) => {
       itemMap.set(item.name, {
@@ -195,7 +288,7 @@
       });
     });
 
-    validSalesOrders(orders).forEach((order) => {
+    filteredOrders.filter(isValidSales).forEach((order) => {
       (order.items || []).forEach((item) => {
         const current = itemMap.get(item.name) || {
           item: item.name,
@@ -242,90 +335,62 @@
     })).sort((a, b) => b.revenue - a.revenue || b.menuItems - a.menuItems);
   }
 
-  function categoryName(id) {
-    const found = getCategories().find((category) => category.id === id);
-    return found?.name || String(id || 'Uncategorized').replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
-  }
-
   function groupOrders(orders, keyName) {
     const map = new Map();
     orders.forEach((order) => {
-      const key = order[keyName] || 'Not specified';
+      const key = order[keyName] || (keyName === 'status' ? 'pending' : 'Not specified');
       const current = map.get(key) || { label: key, orders: 0, sales: 0 };
       current.orders += 1;
-      if ((order.status || 'pending') !== 'cancelled') current.sales += Number(order.total || 0);
+      if (isValidSales(order)) current.sales += Number(order.total || 0);
       map.set(key, current);
     });
     return Array.from(map.values()).sort((a, b) => b.orders - a.orders);
   }
 
   function getReportData() {
-    const orders = getOrders();
+    const filter = getFilter();
+    const allOrders = getOrders();
+    const filteredOrders = filterOrders(allOrders, filter);
     const menuItems = getMenuItems();
-    const now = new Date();
-    const todayOrders = orders.filter((order) => isSameDay(orderDate(order), now));
-    const weekOrders = orders.filter((order) => isSameWeek(orderDate(order), now));
-    const monthOrders = orders.filter((order) => isSameMonth(orderDate(order), now));
-    const yearOrders = orders.filter((order) => isSameYear(orderDate(order), now));
-    const itemRows = getItemRows(orders, menuItems);
+    const validOrders = filteredOrders.filter(isValidSales);
+    const itemRows = getItemRows(filteredOrders, menuItems);
     const categoryRows = getCategoryRows(menuItems, itemRows);
-    const completeOrders = orders.filter((order) => order.status === 'complete');
-    const cancelledOrders = orders.filter((order) => order.status === 'cancelled');
-    const pendingOrders = orders.filter((order) => !order.status || order.status === 'pending');
-    const readyOrders = orders.filter((order) => order.status === 'ready');
-    const overallSales = sumSales(orders);
+    const sales = sumSales(filteredOrders);
+    const itemsSold = itemRows.reduce((sum, row) => sum + row.sold, 0);
 
     return {
+      filter,
       generatedAt: new Date(),
-      orders,
+      orders: filteredOrders,
+      allOrders,
       menuItems,
       categories: getCategories(),
-      ordersKpi: {
-        overall: orders.length,
-        today: todayOrders.length,
-        week: weekOrders.length,
-        month: monthOrders.length,
-        year: yearOrders.length,
-        pending: pendingOrders.length,
-        ready: readyOrders.length,
-        complete: completeOrders.length,
-        cancelled: cancelledOrders.length
-      },
-      salesKpi: {
-        overall: overallSales,
-        today: sumSales(todayOrders),
-        week: sumSales(weekOrders),
-        month: sumSales(monthOrders),
-        year: sumSales(yearOrders),
-        avgTicket: orders.length ? overallSales / Math.max(1, validSalesOrders(orders).length) : 0
-      },
-      dailyRows: getRangeRows(orders, 'daily'),
-      weeklyRows: getRangeRows(orders, 'weekly'),
-      monthlyRows: getRangeRows(orders, 'monthly'),
-      yearlyRows: getYearRows(orders),
+      trendRows: buildTrendRows(filteredOrders, filter),
       itemRows,
       categoryRows,
-      statusRows: groupOrders(orders, 'status').map((row) => ({ ...row, label: row.label || 'pending' })),
-      paymentRows: groupOrders(orders, 'payment'),
-      typeRows: groupOrders(orders, 'type')
+      statusRows: groupOrders(filteredOrders, 'status'),
+      paymentRows: groupOrders(filteredOrders, 'payment'),
+      typeRows: groupOrders(filteredOrders, 'type'),
+      kpis: {
+        orders: filteredOrders.length,
+        sales,
+        avgTicket: validOrders.length ? sales / validOrders.length : 0,
+        itemsSold,
+        menuItems: menuItems.length,
+        categories: getCategories().length
+      }
     };
   }
 
   function renderKpis(data) {
     if (!els.kpis) return;
     const kpis = [
-      ['Total orders', number(data.ordersKpi.overall), 'All placed orders'],
-      ['Today orders', number(data.ordersKpi.today), 'Orders placed today'],
-      ['This week orders', number(data.ordersKpi.week), 'Current week'],
-      ['This month orders', number(data.ordersKpi.month), 'Current month'],
-      ['This year orders', number(data.ordersKpi.year), 'Current year'],
-      ['Total sales', peso(data.salesKpi.overall), 'Excludes cancelled orders'],
-      ['Today sales', peso(data.salesKpi.today), 'Revenue today'],
-      ['This week sales', peso(data.salesKpi.week), 'Revenue this week'],
-      ['This month sales', peso(data.salesKpi.month), 'Revenue this month'],
-      ['This year sales', peso(data.salesKpi.year), 'Revenue this year'],
-      ['Average ticket', peso(data.salesKpi.avgTicket), 'Sales per valid order'],
-      ['Menu items', number(data.menuItems.length), `${number(data.categories.length)} categories`]
+      ['Orders', number(data.kpis.orders), data.filter.label],
+      ['Sales', peso(data.kpis.sales), 'Cancelled orders excluded'],
+      ['Average ticket', peso(data.kpis.avgTicket), 'Sales per valid order'],
+      ['Items sold', number(data.kpis.itemsSold), 'Total menu quantity sold'],
+      ['Menu items', number(data.kpis.menuItems), 'Admin-managed items'],
+      ['Categories', number(data.kpis.categories), 'Admin-managed categories']
     ];
 
     els.kpis.innerHTML = kpis.map(([label, value, note]) => `
@@ -339,51 +404,54 @@
 
   function chartSvg(rows, valueKey, options = {}) {
     const width = 760;
-    const height = 280;
-    const padding = { top: 20, right: 24, bottom: 56, left: 58 };
+    const height = 250;
+    const padding = { top: 18, right: 24, bottom: 52, left: 58 };
     const innerWidth = width - padding.left - padding.right;
     const innerHeight = height - padding.top - padding.bottom;
-    const max = Math.max(1, ...rows.map((row) => Number(row[valueKey] || 0)));
-    const labels = rows.map((row) => row.label);
+    const rawMax = Math.max(0, ...rows.map((row) => Number(row[valueKey] || 0)));
+    const max = options.currency ? Math.max(1, rawMax) : Math.max(4, Math.ceil(rawMax));
     const points = rows.map((row, index) => {
       const x = padding.left + (rows.length <= 1 ? innerWidth / 2 : (index / (rows.length - 1)) * innerWidth);
       const y = padding.top + innerHeight - (Number(row[valueKey] || 0) / max) * innerHeight;
       return { x, y, row };
     });
 
-    const yTicks = [0, 0.25, 0.5, 0.75, 1].map((ratio) => {
+    const tickValues = [0, 0.25, 0.5, 0.75, 1].map((ratio) => options.currency ? max * ratio : Math.round(max * ratio));
+    const yTicks = tickValues.map((value) => {
+      const ratio = max ? value / max : 0;
       const y = padding.top + innerHeight - ratio * innerHeight;
-      const value = max * ratio;
-      return `<line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="#eadccb" stroke-width="1"/><text x="${padding.left - 10}" y="${y + 4}" text-anchor="end" font-size="12" fill="#746a60">${options.currency ? peso(value).replace('.00', '') : Math.round(value)}</text>`;
+      return `<line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="#eadccb" stroke-width="1"/><text x="${padding.left - 10}" y="${y + 4}" text-anchor="end" font-size="12" fill="#746a60">${options.currency ? peso(value) : value}</text>`;
     }).join('');
 
     if (options.type === 'line') {
       const path = points.map((point, index) => `${index ? 'L' : 'M'} ${point.x} ${point.y}`).join(' ');
       const circles = points.map((point) => `<circle cx="${point.x}" cy="${point.y}" r="4" fill="#6f8954"><title>${point.row.label}: ${options.currency ? peso(point.row[valueKey]) : number(point.row[valueKey])}</title></circle>`).join('');
-      const xLabels = points.map((point, index) => index % Math.ceil(points.length / 8) === 0 || points.length <= 8 ? `<text x="${point.x}" y="${height - 20}" text-anchor="middle" font-size="12" fill="#746a60">${point.row.label}</text>` : '').join('');
+      const step = Math.max(1, Math.ceil(points.length / 7));
+      const xLabels = points.map((point, index) => index % step === 0 || index === points.length - 1 ? `<text x="${point.x}" y="${height - 18}" text-anchor="middle" font-size="12" fill="#746a60">${point.row.label}</text>` : '').join('');
       return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${options.title || 'Report chart'}">${yTicks}<path d="${path}" fill="none" stroke="#6f8954" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>${circles}${xLabels}</svg>`;
     }
 
     const gap = 10;
-    const barWidth = Math.max(12, (innerWidth - gap * (rows.length - 1)) / Math.max(1, rows.length));
+    const barWidth = Math.max(14, (innerWidth - gap * Math.max(0, rows.length - 1)) / Math.max(1, rows.length));
     const bars = rows.map((row, index) => {
       const value = Number(row[valueKey] || 0);
       const barHeight = (value / max) * innerHeight;
       const x = padding.left + index * (barWidth + gap);
       const y = padding.top + innerHeight - barHeight;
-      const label = String(row.label).length > 12 ? String(row.label).slice(0, 11) + '…' : row.label;
-      return `<rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="8" fill="#6f8954"><title>${row.label}: ${options.currency ? peso(value) : number(value)}</title></rect><text x="${x + barWidth / 2}" y="${height - 20}" text-anchor="middle" font-size="12" fill="#746a60">${label}</text>`;
+      const label = String(row.label).length > 13 ? String(row.label).slice(0, 12) + '…' : row.label;
+      return `<rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="8" fill="#6f8954"><title>${row.label}: ${options.currency ? peso(value) : number(value)}</title></rect><text x="${x + barWidth / 2}" y="${height - 18}" text-anchor="middle" font-size="12" fill="#746a60">${label}</text>`;
     }).join('');
+
     return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${options.title || 'Report chart'}">${yTicks}${bars}</svg>`;
   }
 
   function chartCard(title, description, rows, valueKey, options = {}) {
-    const filteredRows = rows.length ? rows : [{ label: 'No data', [valueKey]: 0 }];
+    const chartRows = rows.length ? rows : [{ label: 'No data', [valueKey]: 0 }];
     return `
       <article class="report-chart-card">
         <h3>${title}</h3>
         <p>${description}</p>
-        ${chartSvg(filteredRows, valueKey, { ...options, title })}
+        ${chartSvg(chartRows, valueKey, { ...options, title })}
       </article>
     `;
   }
@@ -391,19 +459,18 @@
   function renderCharts(data) {
     if (!els.charts) return;
     const topItems = data.itemRows.filter((row) => row.sold > 0).slice(0, 8).map((row) => ({ label: row.item, sold: row.sold, revenue: row.revenue }));
-    const categories = data.categoryRows.map((row) => ({ label: row.category, revenue: row.revenue, menuItems: row.menuItems }));
+    const categories = data.categoryRows.filter((row) => row.revenue > 0 || row.sold > 0).map((row) => ({ label: row.category, revenue: row.revenue, sold: row.sold }));
+
     els.charts.innerHTML = [
-      chartCard('Orders by month', 'Current year order count by month.', data.monthlyRows, 'orders', { type: 'line' }),
-      chartCard('Sales by month', 'Current year sales trend by month.', data.monthlyRows, 'sales', { type: 'line', currency: true }),
-      chartCard('Orders by year', 'Yearly order totals including 2024, 2025, and onward.', data.yearlyRows, 'orders'),
-      chartCard('Sales by year', 'Yearly sales totals excluding cancelled orders.', data.yearlyRows, 'sales', { currency: true }),
-      chartCard('Top menu items sold', 'Ranked by total quantity sold.', topItems, 'sold'),
-      chartCard('Sales by category', 'Revenue contribution by menu category.', categories, 'revenue', { currency: true })
+      chartCard('Orders trend', `Orders for ${data.filter.label}.`, data.trendRows, 'orders', { type: 'line' }),
+      chartCard('Sales trend', `Sales for ${data.filter.label}.`, data.trendRows, 'sales', { type: 'line', currency: true }),
+      chartCard('Top menu items', 'Filtered by selected date range.', topItems, 'sold'),
+      chartCard('Sales by category', 'Revenue by category for selected date range.', categories, 'revenue', { currency: true })
     ].join('');
   }
 
   function table(headers, rows, options = {}) {
-    if (!rows.length) return '<div class="report-empty">No data available yet.</div>';
+    if (!rows.length) return '<div class="report-empty">No data available for this filter.</div>';
     return `
       <table class="report-table">
         ${options.caption ? `<caption>${options.caption}</caption>` : ''}
@@ -414,22 +481,14 @@
   }
 
   function renderTables(data) {
-    if (els.yearly) {
-      els.yearly.innerHTML = table(['Year', 'Orders', 'Sales'], data.yearlyRows.map((row) => [row.label, number(row.orders), peso(row.sales)]));
-    }
-    if (els.monthly) {
-      els.monthly.innerHTML = table(['Month', 'Orders', 'Sales'], data.monthlyRows.map((row) => [row.label, number(row.orders), peso(row.sales)]));
-    }
-    if (els.weekly) {
-      const weekly = table(['Week', 'Orders', 'Sales'], data.weeklyRows.map((row) => [row.label, number(row.orders), peso(row.sales)]), { caption: 'Last 8 weeks' });
-      const daily = table(['Day', 'Orders', 'Sales'], data.dailyRows.map((row) => [row.label, number(row.orders), peso(row.sales)]), { caption: 'Last 14 days' });
-      els.weekly.innerHTML = weekly + '<br />' + daily;
+    if (els.period) {
+      els.period.innerHTML = table(['Period', 'Orders', 'Sales'], data.trendRows.map((row) => [row.label, number(row.orders), peso(row.sales)]));
     }
     if (els.menu) {
-      els.menu.innerHTML = table(['Item', 'Category', 'Price', 'Sold', 'Revenue'], data.itemRows.map((row) => [row.item, row.category, peso(row.price), number(row.sold), peso(row.revenue)]));
+      els.menu.innerHTML = table(['Item', 'Category', 'Price', 'Sold', 'Revenue'], data.itemRows.map((row) => [row.item, row.category, peso(row.price), number(row.sold), peso(row.revenue)]), { caption: 'Menu items' });
     }
     if (els.category) {
-      els.category.innerHTML = table(['Category', 'Menu items', 'Avg price', 'Sold', 'Revenue'], data.categoryRows.map((row) => [row.category, number(row.menuItems), peso(row.avgPrice), number(row.sold), peso(row.revenue)]));
+      els.category.innerHTML = table(['Category', 'Menu items', 'Avg price', 'Sold', 'Revenue'], data.categoryRows.map((row) => [row.category, number(row.menuItems), peso(row.avgPrice), number(row.sold), peso(row.revenue)]), { caption: 'Categories' });
     }
     if (els.status) {
       const status = table(['Status', 'Orders', 'Sales'], data.statusRows.map((row) => [row.label, number(row.orders), peso(row.sales)]), { caption: 'Order statuses' });
@@ -453,7 +512,9 @@
   function renderReports() {
     if (!els.kpis && !els.charts) return;
     const data = getReportData();
-    if (els.updated) els.updated.textContent = 'Last updated: ' + data.generatedAt.toLocaleString();
+    if (els.updated) els.updated.textContent = `Last updated: ${data.generatedAt.toLocaleString()} • Filter: ${data.filter.label}`;
+    if (els.rangeTitle) els.rangeTitle.textContent = `${data.filter.label} overview`;
+    if (els.periodTitle) els.periodTitle.textContent = `${data.filter.label} performance`;
     renderKpis(data);
     renderCharts(data);
     renderTables(data);
@@ -488,30 +549,22 @@
   function exportExcel() {
     const data = getReportData();
     const summaryRows = [
-      ['Total orders', data.ordersKpi.overall],
-      ['Today orders', data.ordersKpi.today],
-      ['This week orders', data.ordersKpi.week],
-      ['This month orders', data.ordersKpi.month],
-      ['This year orders', data.ordersKpi.year],
-      ['Total sales', data.salesKpi.overall],
-      ['Today sales', data.salesKpi.today],
-      ['This week sales', data.salesKpi.week],
-      ['This month sales', data.salesKpi.month],
-      ['This year sales', data.salesKpi.year],
-      ['Average ticket', data.salesKpi.avgTicket],
-      ['Menu items', data.menuItems.length],
-      ['Categories', data.categories.length]
+      ['Filter', data.filter.label],
+      ['Orders', data.kpis.orders],
+      ['Sales', data.kpis.sales],
+      ['Average ticket', data.kpis.avgTicket],
+      ['Items sold', data.kpis.itemsSold],
+      ['Menu items', data.kpis.menuItems],
+      ['Categories', data.kpis.categories]
     ];
 
+    const chartData = workbookTable('Chart Data - Period Trend', ['Period', 'Orders', 'Sales'], data.trendRows.map((row) => [row.label, row.orders, row.sales]));
     const html = `
       <html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif} table{border-collapse:collapse;margin:16px 0;width:100%} th{background:#dbe8c9} th,td{padding:8px;border:1px solid #999} h1,h2{color:#15120f}</style></head><body>
-      <h1>BLK.8 CAFÉ Admin Report</h1>
+      <h1>BLK.8 CAFÉ Filtered Admin Report</h1>
       <p>Generated: ${data.generatedAt.toLocaleString()}</p>
       ${workbookTable('Summary', ['Metric', 'Value'], summaryRows)}
-      ${workbookTable('Yearly Orders and Sales', ['Year', 'Orders', 'Sales'], data.yearlyRows.map((row) => [row.label, row.orders, row.sales]))}
-      ${workbookTable('Monthly Performance', ['Month', 'Orders', 'Sales'], data.monthlyRows.map((row) => [row.label, row.orders, row.sales]))}
-      ${workbookTable('Weekly Performance', ['Week', 'Orders', 'Sales'], data.weeklyRows.map((row) => [row.label, row.orders, row.sales]))}
-      ${workbookTable('Daily Performance', ['Day', 'Orders', 'Sales'], data.dailyRows.map((row) => [row.label, row.orders, row.sales]))}
+      ${chartData}
       ${workbookTable('Menu Item Performance', ['Item', 'Category', 'Price', 'Sold', 'Revenue'], data.itemRows.map((row) => [row.item, row.category, row.price, row.sold, row.revenue]))}
       ${workbookTable('Category Performance', ['Category', 'Menu Items', 'Average Price', 'Sold', 'Revenue'], data.categoryRows.map((row) => [row.category, row.menuItems, row.avgPrice, row.sold, row.revenue]))}
       ${workbookTable('Order Statuses', ['Status', 'Orders', 'Sales'], data.statusRows.map((row) => [row.label, row.orders, row.sales]))}
@@ -520,14 +573,14 @@
       ${workbookTable('Order Details', ['Reference', 'Date', 'Customer', 'Status', 'Items', 'Total', 'Payment', 'Notes'], data.orders.map((order) => [order.reference, order.createdAt, order.customer, order.status || 'pending', (order.items || []).map((item) => `${item.quantity}x ${item.name}`).join('; '), order.total, order.payment, order.notes]))}
       </body></html>
     `;
-    downloadFile('blk8-admin-report.xls', html, 'application/vnd.ms-excel;charset=utf-8');
+    downloadFile('blk8-filtered-admin-report.xls', html, 'application/vnd.ms-excel;charset=utf-8');
   }
 
   function exportPdf() {
     renderReports();
     const report = els.content?.cloneNode(true);
     if (!report) return;
-    report.querySelectorAll('.report-actions').forEach((node) => node.remove());
+    report.querySelectorAll('.report-actions, .report-filter').forEach((node) => node.remove());
     const win = window.open('', '_blank', 'width=1200,height=900');
     if (!win) return;
     win.document.write(`
@@ -535,7 +588,7 @@
       <html>
         <head>
           <meta charset="UTF-8" />
-          <title>BLK.8 Admin Report</title>
+          <title>BLK.8 Filtered Admin Report</title>
           <style>
             body{font-family:Arial,sans-serif;margin:32px;color:#15120f;background:#fffaf3}
             h1,h2,h3,p{margin-top:0}.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6f8954;font-weight:900}
@@ -543,11 +596,11 @@
             .report-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.report-kpi span{font-size:11px;text-transform:uppercase;color:#6f8954;font-weight:900}.report-kpi strong{display:block;font-size:24px;margin-top:6px}
             .report-chart-grid,.report-table-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.report-table-grid>article:last-child{grid-column:1/-1}.report-chart-card svg{width:100%;height:auto}
             table{width:100%;border-collapse:collapse;font-size:12px}th,td{border-bottom:1px solid #e5d8c8;padding:7px;text-align:left;vertical-align:top}th{background:#f3e7d6;text-transform:uppercase;font-size:10px}
-            .admin-sidebar,.admin-topbar,.modal,.report-actions{display:none!important}@page{size:A4 landscape;margin:12mm}
+            .admin-sidebar,.admin-topbar,.modal,.report-actions,.report-filter{display:none!important}@page{size:A4 landscape;margin:12mm}
           </style>
         </head>
         <body>
-          <h1>BLK.8 CAFÉ Admin Report</h1>
+          <h1>BLK.8 CAFÉ Filtered Admin Report</h1>
           ${report.outerHTML}
           <script>window.onload=()=>setTimeout(()=>window.print(),300);<\/script>
         </body>
@@ -556,6 +609,24 @@
     win.document.close();
   }
 
+  function syncDateInputs() {
+    const preset = els.preset?.value;
+    const isCustom = preset === 'custom';
+    if (els.start) els.start.disabled = !isCustom;
+    if (els.end) els.end.disabled = !isCustom;
+    getFilter();
+  }
+
+  els.filterForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    renderReports();
+  });
+  els.preset?.addEventListener('change', () => {
+    syncDateInputs();
+    renderReports();
+  });
+  els.start?.addEventListener('change', renderReports);
+  els.end?.addEventListener('change', renderReports);
   els.excel?.addEventListener('click', exportExcel);
   els.pdf?.addEventListener('click', exportPdf);
   window.addEventListener('storage', (event) => {
@@ -565,5 +636,6 @@
     if (!document.hidden) renderReports();
   });
   setInterval(renderReports, 8000);
+  syncDateInputs();
   renderReports();
 })();
