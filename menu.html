@@ -61,8 +61,8 @@
           <p class="eyebrow">BLK.8 CAFÉ menu</p>
           <h1>Choose your food, review your cart, then place your order.</h1>
           <p>
-            Add drinks, snacks, and meals to your order list. Adjust quantities, add pickup notes,
-            choose your order type, then submit your order request.
+            Add drinks, snacks, and meals to your order list. Adjust quantities, choose pickup/takeout
+            or delivery, select your preferred date and time, then submit your order request.
           </p>
           <div class="hero__actions">
             <a class="btn" href="#menu-list">Start Ordering</a>
@@ -72,7 +72,7 @@
         <div class="menu-page-hero__card">
           <span>Today’s quick pick</span>
           <strong>Iced Coffee + Pasta</strong>
-          <p>Good for an afternoon coffee break or quick takeout run.</p>
+          <p>Good for an afternoon coffee break, takeout run, or delivery order.</p>
         </div>
       </div>
     </section>
@@ -211,27 +211,27 @@
             <div class="form-row">
               <label>
                 Order type
-                <select name="type">
-                  <option>Pickup / Takeout</option>
-                  <option>Dine-in inquiry</option>
+                <select name="type" required>
+                  <option value="Pickup / Takeout">Pickup / Takeout</option>
+                  <option value="Delivery">Delivery</option>
                 </select>
               </label>
               <label>
-                Preferred time
-                <input type="text" name="time" placeholder="Today, 5:30 PM" />
+                Preferred date & time
+                <input type="datetime-local" name="time" data-preferred-time required />
               </label>
             </div>
             <label>
               Payment method
-              <select name="payment">
-                <option>Pay at counter</option>
-                <option>GCash / e-wallet inquiry</option>
-                <option>Cash on pickup</option>
+              <select name="payment" required>
+                <option value="Online payment">Online payment</option>
+                <option value="GCash">GCash</option>
+                <option value="Bank account">Bank account</option>
               </select>
             </label>
             <label>
               Notes
-              <textarea name="notes" placeholder="Less sweet, extra ice, no onions, etc."></textarea>
+              <textarea name="notes" placeholder="Delivery address, less sweet, extra ice, no onions, etc."></textarea>
             </label>
             <button class="btn" type="submit" data-place-order disabled>Place Order</button>
             <p class="form-help" data-cart-status aria-live="polite">Add at least one item to place an order.</p>
@@ -240,7 +240,7 @@
           <div class="order-confirmation" data-order-confirmation hidden>
             <strong>Order placed!</strong>
             <p data-order-reference></p>
-            <p class="order-confirmation__note">This request is saved in this browser. Final confirmation still depends on café staff contact.</p>
+            <p class="order-confirmation__note">This request is saved in this browser. Final confirmation and payment details still depend on café staff contact.</p>
             <button type="button" data-new-order>Start New Order</button>
           </div>
         </aside>
